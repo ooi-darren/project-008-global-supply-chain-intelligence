@@ -8,6 +8,10 @@
 
 > Understanding how the world moves, identifying where supply chains are vulnerable, and assessing where they may go next, with a Malaysia 2030+ deep dive.
 
+## Recommendation
+
+**Malaysia should treat its current position as structurally sound but not defensible by default: real, rising trade-partner concentration and a risk rank that swings from top-decile to comfortably mid-pack depending on which exposure matters most should be actively monitored, not assumed away, while its two strongest, evidence-backed levers, electronics/semiconductor assembly-test-packaging and its position astride the Strait of Malacca, the world's single largest oil-transit chokepoint, are the two areas where continued investment is best justified by this project's own data.** Everything below builds the evidence for this recommendation; the Key Strategic Insights section works through it finding by finding.
+
 ## Executive Summary
 
 This project builds a global supply-chain intelligence system from UN Comtrade, USGS, World Bank, and Malaysia's DOSM data to test where global trade structure has actually shifted since 2016, where raw-material supply is genuinely concentrated, and what that means for Malaysia specifically, rather than relying on headline narratives. A 57-country bilateral trade network (three independent double-counting dimensions in the UN Comtrade free tier identified and corrected; the United States and India are structurally absent from that same free tier, not from this project's pipeline) shows that network centrality and raw trade volume diverge sharply: the UAE gained more structural importance than any other economy between 2016 and 2023 (+29% PageRank), a real, data-driven signature of Gulf trade diversification, while the UK, Hong Kong, and Singapore lost the most (-21% to -26%). A 13-material critical-minerals concentration index, built from real 2023 USGS production data, finds four materials, Gallium (China, 98%), Tungsten (China, 84%), Graphite (China, 79%), and Cobalt (DR Congo, 76%), far above the standard highly-concentrated HHI threshold of 2,500, with Nickel (Indonesia, 60%) the clearest live case of concentration still rising. A transparent, sensitivity-tested four-pillar Supply Chain Risk Index (Spearman ρ=0.976 against an alternative weighting) ranks 59 economies; Malaysia sits mid-pack at 30th, with its own supplier and customer trade concentration rising, not falling, between 2016 and 2023, a finding that runs against the "China+1 diversification" narrative. A Malaysia export forecast to 2030, validated on a genuine five-year rolling backtest rather than a single train/test split, finds that the simplest model with a trend, naive-with-drift, beats both ARIMA and ETS on real out-of-sample accuracy, reported honestly rather than replaced with a more impressive-looking result, forecasting RM1.87 trillion by 2030 (90% band: RM1.53-2.21 trillion). A companion 10,000-path Monte Carlo simulation on nickel prices, the one critical material with both a real production-concentration figure and a matching price history, puts the 12-month probability of a greater-than-20% price move at 25-27% (increase) versus 13-17% (decrease).
@@ -28,7 +32,7 @@ This project builds a global supply-chain intelligence system from UN Comtrade, 
 
 **5. A validated backtest, not a dramatic model, wins the Malaysia export forecast.** Four models were compared on a genuine 5-year rolling backtest; the simple naive-with-drift baseline beat both ARIMA and ETS on out-of-sample RMSE, reported honestly per this project's own research-integrity standard rather than hidden. Forward forecast: RM 1.87 trillion by 2030 (90% band: RM 1.53-2.21 trillion).
 
-**6. Malaysia ranks 30th of 59 economies on this project's Supply Chain Risk Index**, mid-pack, not a standout on either end. The highest-risk economies (Cuba, Mongolia, Iraq, Hong Kong, Macao) share small/concentrated/geopolitically-exposed profiles; the lowest-risk (Germany, Canada, China, Japan, France) are large, diversified, logistically strong economies.
+**6. Malaysia ranks 30th of 59 economies on this project's Supply Chain Risk Index**, mid-pack, not a standout on either end, but that position is not as stable as a single ranking suggests. A 1,000-draw weight-sensitivity Monte Carlo (added after external review) shows Malaysia's rank actually ranges from 5th to 33rd of 48 comparable countries depending on which of the four risk pillars is weighted most heavily, a genuinely wider band than most other countries in the sample. The highest-risk economies (Cuba, Mongolia, Iraq, Hong Kong, Macao) share small/concentrated/geopolitically-exposed profiles; the lowest-risk (Germany, Canada, China, Japan, France) are large, diversified, logistically strong economies.
 
 **7. Malaysia's imports are 86% production inputs, not final consumption** (capital + intermediate goods share of retained imports, DOSM BEC data, 2025), direct evidence that Malaysia is deeply embedded in upstream manufacturing supply chains, not primarily an import-for-consumption economy.
 
@@ -59,6 +63,7 @@ Businesses and policymakers routinely make claims about supply-chain "resilience
 - **14 priority commodities**, monthly nominal prices since the 1960s (11,066 rows), current through July 2026 (World Bank Commodity Markets "Pink Sheet")
 - **5 Malaysia-specific DOSM datasets** (trade headline 2001-2025, 275-row SITC detail, BEC end-use production-input breakdown) plus dedicated UN Comtrade bilateral pulls (reporter code 458)
 - **5 independent public data sources** in total, none behind a paywall or requiring a registered API key; full citations and licence terms in `docs/SOURCES.md`
+- **19 visualisations** (17 required + 2 added after external review: a risk-index weight-sensitivity chart and a forecast stress test), **8 narrative notebooks**, **11 methodology/limitations/sources documents**
 
 ## Research Framework
 
@@ -106,7 +111,7 @@ World Bank Logistics Performance Index (overall + 3 sub-components) and containe
 
 ## Supply Chain Risk
 
-Four-pillar transparent composite (import dependency, logistics fragility, trade-partner concentration, commodity-price exposure), equal-weighted, min-max normalised, with a documented sensitivity check (Spearman ρ=0.976 against a concentration-double-weighted alternative). Full methodology: `docs/METHODOLOGY.md`.
+Four-pillar transparent composite (import dependency, logistics fragility, trade-partner concentration, commodity-price exposure), equal-weighted, min-max normalised, with two documented sensitivity checks: the original single-alternative-weighting comparison (Spearman ρ=0.976 against a concentration-double-weighted alternative) and, added after external review, a fuller 1,000-draw weight-sensitivity Monte Carlo showing each country's rank range across random pillar weightings (Visualisation 18). Independently cross-checked, qualitatively, against two published external indices (DHL Global Connectedness Report 2026, Agility Emerging Markets Logistics Index 2025): see `docs/EXTERNAL_VALIDATION.md`. Full methodology: `docs/METHODOLOGY.md`.
 
 ## Future Scenarios
 
@@ -114,15 +119,17 @@ Two distinct tools, kept clearly separate: 8 discrete shock simulations (Section
 
 ## Forecasting
 
-Malaysia annual exports, 2001-2025 actual, forecast to 2030. Four models compared on a genuine 5-year rolling backtest (not a single train/test split); naive-with-drift won, reported honestly rather than hidden. Full methodology: `docs/FORECASTING.md` (Visualisation 13).
+Malaysia annual exports, 2001-2025 actual, forecast to 2030. Four models compared on a genuine 5-year rolling backtest (not a single train/test split); naive-with-drift won, reported honestly rather than hidden. Added after external review: the baseline forecast is now also stress-tested against three real, historically-anchored shock scenarios (global recession, trade-tension escalation, energy price shock), moving the 2030 figure from RM1.87T to as low as RM1.77-1.80T under a real shock, not just a qualitative "this could be disrupted" caveat (Visualisation 19). Full methodology: `docs/FORECASTING.md` (Visualisations 13, 19).
 
 ## Malaysia Deep Dive 🇲🇾
 
 Malaysia is a dedicated strategic case study, not an appendix: full framework in `docs/MALAYSIA_FRAMEWORK.md`. Covers: import/export composition (DOSM), bilateral supplier/customer concentration (UN Comtrade), ASEAN-6 logistics comparison (World Bank LPI), critical-minerals position (USGS), a 5-dimension Vulnerability Index, and an evidence-graded Opportunity Radar (Visualisations 15, 16, 17).
 
+**The Strait of Malacca**, added after external review as the single most visible gap in the original version of this project: the world's largest oil-transit chokepoint by volume (23.2 million barrels/day, 29% of global maritime oil flows, EIA, 1H2025), only 1.7 miles wide at its narrowest point, runs directly along Malaysia's own coastline. It is simultaneously the clearest real-world grounding for Malaysia's "regional logistics hub" opportunity (Malaysia's own container-port traffic grew from 20.9 to 30.7 million TEU, 2013-2024, World Bank) and its most concrete geography-specific risk, both captured explicitly in `docs/SCENARIO_METHODOLOGY.md` Scenario A/F rather than left as an abstraction.
+
 ## Malaysia 2030+ Opportunities & Risks
 
-**Strongly evidenced opportunities:** electronics/semiconductor assembly-test-packaging (Malaysia's largest real export category, 50.3% of exports by SITC section) and regional logistics hub positioning (2nd-highest LPI in ASEAN-6, behind only Singapore). **Weakly evidenced / speculative:** critical-minerals processing (Malaysia's own production share is under 2.3% for every tracked material; any real opportunity would be processing imported feedstock, not a domestic resource advantage). **Not evidenced by this project:** data-centre/digital-infrastructure investment (no direct dataset collected, a named gap, not a claim either way). Full evidence grading: `data/processed/malaysia_opportunity_radar.csv`.
+**Strongly evidenced opportunities:** electronics/semiconductor assembly-test-packaging (Malaysia's largest real export category, 50.3% of exports by SITC section, roughly RM808 billion in 2025, `malaysia_trade_sitc_annual.csv`) and regional logistics hub positioning (2nd-highest LPI in ASEAN-6, behind only Singapore, grounded in the Strait of Malacca above). Named, publicly reported companies behind the electronics figure, added after external review so this reads as a business story, not just a statistic: Infineon's RM30 billion Kulim silicon-carbide fab, Micron's Muar/Prai/Batu Kawan facilities, ASE Technology's fifth Penang plant (February 2025). **A genuine counter-signal, reported here rather than omitted:** Intel paused its own Penang wafer-fabrication and advanced-packaging project as of February 2025, a real, current reminder that even Malaysia's strongest-evidenced opportunity is not a one-way bet. **Weakly evidenced / speculative:** critical-minerals processing (Malaysia's own production share is under 2.3% for every tracked material; any real opportunity would be processing imported feedstock, not a domestic resource advantage). **Not evidenced by this project:** data-centre/digital-infrastructure investment (no direct dataset collected, a named gap, not a claim either way). Full evidence grading: `data/processed/malaysia_opportunity_radar.csv`; company sourcing: `docs/SOURCES.md`.
 
 ## Key Strategic Insights
 
@@ -154,7 +161,7 @@ Malaysia is a dedicated strategic case study, not an appendix: full framework in
 
 **BUSINESS IMPLICATION:** A forecasting exercise that skips backtesting and defaults to the most sophisticated available model (ARIMA, in this case) would have produced a *worse* Malaysia export forecast than the simplest reasonable baseline.
 
-**STRATEGIC CONSIDERATION:** Any forecasting process feeding into planning or capital-allocation decisions should include a real rolling-origin backtest before a model is trusted, regardless of how established or sophisticated that model is assumed to be.
+**STRATEGIC CONSIDERATION:** Any forecasting process feeding into planning or capital-allocation decisions should include a real rolling-origin backtest before a model is trusted, regardless of how established or sophisticated that model is assumed to be. Added after external review: the baseline forecast is now also stress-tested against three real, historically-anchored shock scenarios rather than being kept in permanent isolation from the scenario layer, see the Forecasting section below and `docs/FORECASTING.md`.
 
 ### Insight 4: Four materials sit far above any reasonable concentration threshold
 
@@ -189,7 +196,7 @@ World Bank, UN Comtrade, USGS Mineral Commodity Summaries 2025, World Bank Commo
 
 ## Limitations
 
-Full document: [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md). Headline items: the United States and India are structurally absent from the free-tier bilateral trade data (verified directly, not assumed); the network covers 59 (practically 57) major economies, not the full ~200; AIS/shipping-route data was not used (commercial/restricted, substituted with container port traffic); Malaysia sub-national analysis was not built (no sufficiently granular free data found); the risk index's commodity-exposure pillar is deliberately the crudest of its four pillars, named as such.
+Full document: [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) (16 items). Headline items: the United States and India are structurally absent from the free-tier bilateral trade data (verified directly, not assumed); the network covers 59 (practically 57) major economies, not the full ~200; AIS/shipping-route data was not used (commercial/restricted, substituted with container port traffic); Malaysia sub-national analysis was not built (no sufficiently granular free data found); the risk index's commodity-exposure pillar is deliberately the crudest of its four pillars, named as such. Added after external review: the risk index's external validation is qualitative, not a formal statistical benchmark; the forecast stress test uses documented simplifying pass-through assumptions, not a modelled economic transmission channel; only Nickel has a matching production-concentration figure and price series for Monte Carlo simulation; and the named companies in the Malaysia section are illustrative public examples, not a systematic dataset.
 
 ## Glossary
 
@@ -233,7 +240,10 @@ python python/analysis/malaysia_vulnerability_opportunity.py
 python python/forecasting/forecast_malaysia_exports.py
 python python/simulation/monte_carlo_nickel.py
 
-# 5. Generate all 17 visualisations
+# 4b. Stress-test the forecast against real shock magnitudes (added after external review)
+python python/forecasting/scenario_stress_test.py
+
+# 5. Generate all 19 visualisations (17 required + 2 added after external review)
 python python/visualisation/make_charts.py
 
 # 6. Walk through the narrative notebooks
@@ -257,11 +267,11 @@ project-008-global-supply-chain-intelligence/
 │   ├── cleaning/          # Master panel, critical materials, commodity prices, Malaysia trade
 │   ├── analysis/           # Risk index, Malaysia deep dive & vulnerability/opportunity
 │   ├── networks/            # Trade network centrality
-│   ├── forecasting/          # Malaysia export forecast + backtest
+│   ├── forecasting/          # Malaysia export forecast + backtest + scenario stress test
 │   ├── simulation/            # Nickel Monte Carlo
-│   └── visualisation/          # House chart style + all 17 chart builders
+│   └── visualisation/          # House chart style + all 19 chart builders
 ├── outputs/
-│   ├── figures/            # 17 PNG visualisations
+│   ├── figures/            # 19 PNG visualisations (17 required + 2 added after external review)
 │   └── tables/               # (chart-ready summary tables, where applicable)
 ├── docs/
 │   ├── METHODOLOGY.md
@@ -273,7 +283,8 @@ project-008-global-supply-chain-intelligence/
 │   ├── LIMITATIONS.md
 │   ├── FORECASTING.md
 │   ├── SCENARIO_METHODOLOGY.md
-│   └── MALAYSIA_FRAMEWORK.md
+│   ├── MALAYSIA_FRAMEWORK.md
+│   └── EXTERNAL_VALIDATION.md
 ├── requirements.txt
 ├── LICENSE
 └── .gitignore

@@ -29,6 +29,18 @@ Per the brief's own "Tool Principle" (Section 27: "Never use a technology just t
 
 The Supply Chain Risk Index (`python/analysis/risk_index.py`) and Malaysia Vulnerability Index (`python/analysis/malaysia_vulnerability_opportunity.py`) both follow the exact transparent-index discipline established in this portfolio's Project 007 Market Attractiveness Index: equal-weighted pillars, min-max normalisation within the sample, retained sub-scores so a reader can recompute with different weights, and a documented sensitivity check (alternative weighting + Spearman rank correlation) rather than a single unexplained score. Full pillar definitions are in each script's own docstring, not duplicated here.
 
+**Sensitivity analysis, upgraded after external review:** the original single-alternative-weighting check (equal weights vs. double-weighting one pillar, Spearman ρ) is a reasonable starting check but not a full sensitivity analysis on its own. The Supply Chain Risk Index now also runs a 1,000-draw weight-sensitivity Monte Carlo (`risk_index_weight_sensitivity.csv`, Visualisation 18): random weight vectors drawn from a symmetric Dirichlet(1,1,1,1) distribution (uniform over the simplex of all non-negative weight combinations summing to 1, so no pillar is privileged a priori), the composite score and full ranking recomputed under each draw, and the resulting Spearman ρ distribution and each country's rank range reported directly, rather than a single data point. This surfaced a genuinely more nuanced finding than the single-check version: Malaysia's risk rank is markedly less stable than its median position suggests (90% band: rank 5-33 of 48 complete-data countries, not a tight cluster around its base rank of 30), reported honestly rather than smoothed over. See `docs/LIMITATIONS.md` item 12 for the 48-vs-59-country caveat.
+
+## Academic Grounding (Related Work)
+
+This project's methods sit within, rather than invent, established quantitative traditions, added here explicitly after external review noted the absence of this grounding:
+
+- **HHI as a concentration measure**: the Herfindahl-Hirschman Index and its conventional 2,500-point "highly concentrated" threshold follow the U.S. Department of Justice / Federal Trade Commission Horizontal Merger Guidelines convention, the standard reference point cited across both antitrust economics and critical-materials-supply literature.
+- **Network centrality on trade data**: computing betweenness, eigenvector centrality, and PageRank on a directed trade-flow network follows the "world trade web" research tradition (e.g. Fagiolo, Reyes, and Schiavo's work on the topological properties of the international trade network, and De Benedictis and Tajoli's work specifically applying network-centrality measures to bilateral trade), which established that a country's structural position in the trade network is a distinct, measurable property from its raw trade volume, exactly the distinction this project's own UAE/Hong Kong finding (Insight 1 in the README) rests on.
+- **Rolling-origin ("walk-forward") backtesting**: the forecasting validation approach (train on everything before year Y, forecast Y+1, roll forward, repeat) is the standard time-series cross-validation convention, preferred over a single train/test split specifically because it is not vulnerable to one lucky or unlucky split.
+
+This project does not claim to extend this literature, only to apply its established conventions correctly and cite them, rather than presenting them as original methodological choices.
+
 ## Forecasting Validation
 
 See `docs/FORECASTING.md` for the full model-comparison and backtest methodology.

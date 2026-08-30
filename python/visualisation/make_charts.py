@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Generates all required visualisations for Project 008 (17 minimum, per brief Section 38)."""
+"""Generates all visualisations for Project 008 (17 minimum per brief Section 38,
+plus 2 added after external review: risk-index weight-sensitivity and the
+forecast stress test)."""
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -31,6 +33,8 @@ mys_suppliers = pd.read_csv("data/processed/malaysia_top_suppliers_2023.csv")
 mys_customers = pd.read_csv("data/processed/malaysia_top_customers_2023.csv")
 asean_lpi = pd.read_csv("data/processed/malaysia_asean_logistics_comparison.csv")
 nickel_mc = pd.read_csv("data/processed/nickel_monte_carlo_12m.csv")
+risk_sensitivity = pd.read_csv("data/processed/risk_index_weight_sensitivity.csv")
+forecast_stress = pd.read_csv("data/processed/malaysia_export_forecast_stress_test.csv")
 
 REGION_ORDER = countries["Project_007_Region"].value_counts().index.tolist()
 REGION_COLORS = {r: c for r, c in zip(REGION_ORDER, [ACCENT_1, '#5a9bd6', '#8fb8de', GRAY, GRAY, GRAY, GRAY, GRAY])}
@@ -79,7 +83,7 @@ for n in top12:
     ax.annotate(code_to_name.get(n, n), pos[n], fontsize=8.5, color=INK_SECONDARY, ha="center", va="bottom")
 ax.set_title("The 59-economy global trade network: hubs are large economies, not necessarily central ones", loc="left")
 ax.set_axis_off()
-add_source(fig, "Source: UN Comtrade, 2023 total exports among 59 major economies — PUBLIC. Node size = total exports; labels = top 12 by export volume.")
+add_source(fig, "Source: UN Comtrade, 2023 total exports among 59 major economies, PUBLIC. Node size = total exports; labels = top 12 by export volume.")
 save(fig, "02_global_trade_network")
 
 # ---------------------------------------------------------------------------
@@ -122,7 +126,7 @@ fig, ax = plt.subplots(figsize=(8.5, 7))
 ax.barh(top15["Country"], top15["score_trade_concentration"], color=ACCENT_2)
 ax.set_title("Most export-concentrated economies in the network (highest HHI, most exposed to a single market)", loc="left", fontsize=11.5)
 ax.set_xlabel("Export-partner concentration score (0-100, min-max of HHI)")
-add_source(fig, "Source: UN Comtrade, 2023 export destinations within the 59-country network — PUBLIC.")
+add_source(fig, "Source: UN Comtrade, 2023 export destinations within the 59-country network, PUBLIC.")
 save(fig, "05_trade_concentration")
 
 # ---------------------------------------------------------------------------
@@ -138,7 +142,7 @@ for b, top, share in zip(bars, ms.sort_values("HHI")["top_producer"], ms.sort_va
 ax.axvline(2500, color=INK_MUTED, linewidth=0.8, linestyle=(0, (3, 3)))
 ax.set_title("Gallium, tungsten, graphite, and cobalt are the most supply-concentrated critical materials", loc="left", fontsize=12)
 ax.set_xlabel("Herfindahl-Hirschman Index (HHI) of 2023 world mine production by country")
-add_source(fig, "Source: USGS Mineral Commodity Summaries 2025, World Data Release — PUBLIC. Dashed line = 2500, the standard HHI \"highly concentrated\" threshold.")
+add_source(fig, "Source: USGS Mineral Commodity Summaries 2025, World Data Release, PUBLIC. Dashed line = 2500, the standard HHI \"highly concentrated\" threshold.")
 save(fig, "06_critical_material_concentration")
 
 # ---------------------------------------------------------------------------
@@ -175,7 +179,7 @@ merged3.plot(column="logistics_performance_index_overall", ax=ax, cmap="Greens",
 ax.set_ylim(-58, 85); ax.set_xlim(-170, 190)
 ax.set_title("Logistics performance is concentrated in Western Europe, East Asia, and a few global hubs", loc="left", fontsize=13)
 ax.set_axis_off()
-add_source(fig, "Source: World Bank Logistics Performance Index, each country's own latest published edition — PUBLIC.")
+add_source(fig, "Source: World Bank Logistics Performance Index, each country's own latest published edition, PUBLIC.")
 save(fig, "08_logistics_performance_map")
 
 # ---------------------------------------------------------------------------
@@ -189,7 +193,7 @@ fig, ax = plt.subplots(figsize=(8.5, 7))
 ax.barh(top_ports["Country"], top_ports["container_port_traffic_teu"] / 1e6, color=ACCENT_1)
 ax.set_title("Top 15 economies by container port traffic (a shipping-route-exposure proxy)", loc="left", fontsize=11.5)
 ax.set_xlabel("Container port traffic (million TEU, latest available year)")
-add_source(fig, "Source: World Bank, container port traffic, PUBLIC. Substitutes for vessel-level AIS route data, which is outside this project's free-data scope — see docs/LIMITATIONS.md.")
+add_source(fig, "Source: World Bank, container port traffic, PUBLIC. Substitutes for vessel-level AIS route data, which is outside this project's free-data scope; see docs/LIMITATIONS.md.")
 save(fig, "09_container_port_traffic")
 
 # ---------------------------------------------------------------------------
@@ -208,7 +212,7 @@ for i in range(len(top_risk)):
                 color="white" if top_risk[pillar_cols].values[i, j] > 55 else INK)
 ax.set_title("Highest supply-chain risk economies, by pillar (0-100, darker = higher risk)", loc="left", fontsize=11.5)
 fig.colorbar(im, ax=ax, shrink=0.7, label="Risk score (0-100)")
-add_source(fig, "Source: this project's Supply Chain Risk Index — see MARKET_ATTRACTIVENESS-style methodology in docs/METHODOLOGY.md.")
+add_source(fig, "Source: this project's Supply Chain Risk Index; see MARKET_ATTRACTIVENESS-style methodology in docs/METHODOLOGY.md.")
 save(fig, "10_risk_heatmap")
 
 # ---------------------------------------------------------------------------
@@ -225,7 +229,7 @@ for _, row in top_label.iterrows():
 ax.set_title("Network centrality: bridging role (x) vs. importance-by-association (y)", loc="left")
 ax.set_xlabel("Betweenness centrality (bridges between otherwise-unconnected trade relationships)")
 ax.set_ylabel("Eigenvector centrality (connected to other important economies)")
-add_source(fig, "Source: NetworkX on UN Comtrade 2023 bilateral exports, 59-country network — PUBLIC/DERIVED. Bubble size = total exports.")
+add_source(fig, "Source: NetworkX on UN Comtrade 2023 bilateral exports, 59-country network, PUBLIC/DERIVED. Bubble size = total exports.")
 save(fig, "11_network_centrality")
 
 # ---------------------------------------------------------------------------
@@ -252,7 +256,7 @@ ax.fill_between(mys_forecast["year"], mys_forecast["lower_90pct_band"] / 1e12, m
 ax.legend(loc="upper left", fontsize=9)
 ax.set_title("Malaysia merchandise exports: actual 2001-2025, forecast to 2030", loc="left")
 ax.set_ylabel("Exports (RM trillion)")
-add_source(fig, "Source: DOSM, PUBLIC. Forecast model selected by 5-year rolling backtest (lowest RMSE) — see docs/FORECASTING.md; naive+drift beat ARIMA and ETS.")
+add_source(fig, "Source: DOSM, PUBLIC. Forecast model selected by 5-year rolling backtest (lowest RMSE); see docs/FORECASTING.md; naive+drift beat ARIMA and ETS.")
 save(fig, "13_malaysia_export_forecast")
 
 # ---------------------------------------------------------------------------
@@ -268,7 +272,7 @@ ax.barh(np.array(scenarios)[order], np.array(impact_score)[order], color=np.arra
 ax.axvline(0, color=INK, linewidth=0.8)
 ax.set_title("Malaysia 2030+ scenario impact assessment (documented judgment, not a model output)", loc="left", fontsize=11)
 ax.set_xlabel("Directional impact on Malaysia (-5 very negative to +5 very positive)")
-add_source(fig, "Source: this project's scenario methodology, docs/SCENARIO_METHODOLOGY.md — DERIVED judgment grounded in this project's own data, not a quantitative model.")
+add_source(fig, "Source: this project's scenario methodology, docs/SCENARIO_METHODOLOGY.md; DERIVED judgment grounded in this project's own data, not a quantitative model.")
 save(fig, "14_scenario_comparison")
 
 # ---------------------------------------------------------------------------
@@ -294,7 +298,7 @@ mv = mys_vuln.sort_values("score_0_100")
 ax.barh(mv["dimension"], mv["score_0_100"], color=ACCENT_2)
 ax.set_title("Malaysia Supply Chain Vulnerability Index components", loc="left", fontsize=11.5)
 ax.set_xlabel("Score (0-100, higher = more vulnerable)")
-add_source(fig, "Source: this project's Malaysia Vulnerability Index, DERIVED from UN Comtrade, World Bank, and DOSM data — see docs/METHODOLOGY.md.")
+add_source(fig, "Source: this project's Malaysia Vulnerability Index, DERIVED from UN Comtrade, World Bank, and DOSM data; see docs/METHODOLOGY.md.")
 save(fig, "16_malaysia_vulnerability_dashboard")
 
 # ---------------------------------------------------------------------------
@@ -310,7 +314,42 @@ ax.barh(mys_opp["opportunity"], mys_opp["strength_score"], color=colors17)
 ax.set_xticks([0, 1, 2, 3])
 ax.set_xticklabels(["Not evidenced", "", "", "Strongly evidenced"])
 ax.set_title("Malaysia opportunity radar: evidence strength, not likelihood", loc="left", fontsize=11.5)
-add_source(fig, "Source: this project's opportunity radar, DERIVED — evidence graded against this project's own collected data, see docs/METHODOLOGY.md.")
+add_source(fig, "Source: this project's opportunity radar, DERIVED. Evidence graded against this project's own collected data, see docs/METHODOLOGY.md.")
 save(fig, "17_malaysia_opportunity_radar")
 
-print("\nAll 17 required visualisations generated.")
+# ---------------------------------------------------------------------------
+# 18. Risk index weight-sensitivity: rank stability across 1,000 random weightings
+# ---------------------------------------------------------------------------
+top_risk = risk_sensitivity.nsmallest(8, "base_rank")
+low_risk = risk_sensitivity.nlargest(8, "base_rank")
+mys_row18 = risk_sensitivity[risk_sensitivity["Country"].str.contains("Malaysia", na=False)]
+subset18 = pd.concat([top_risk, mys_row18, low_risk]).drop_duplicates(subset="ISO3").sort_values("base_rank", ascending=False)
+fig, ax = plt.subplots(figsize=(9, 7))
+is_mys = subset18["Country"].str.contains("Malaysia", na=False)
+colors18 = [ACCENT_2 if m else GRAY for m in is_mys]
+ax.hlines(subset18["Country"], subset18["rank_p5"], subset18["rank_p95"], color=colors18, linewidth=3, alpha=0.6)
+ax.scatter(subset18["base_rank"], subset18["Country"], color=[INK if not m else ACCENT_2 for m in is_mys], zorder=3, s=40)
+ax.set_xlabel("Risk rank across 1,000 random pillar-weight draws (1 = highest risk)")
+ax.set_title("Supply Chain Risk Index: how much does the weighting choice matter?", loc="left", fontsize=11.5)
+ax.invert_xaxis()
+add_source(fig, "Source: this project's risk_index_weight_sensitivity.csv, DERIVED. Dot = base equal-weighted rank, bar = 5th-95th percentile rank across 1,000 random Dirichlet weight draws (48 countries with complete pillar data). Malaysia highlighted.")
+save(fig, "18_risk_index_weight_sensitivity")
+
+# ---------------------------------------------------------------------------
+# 19. Malaysia export forecast, stress-tested against real historical shock magnitudes
+# ---------------------------------------------------------------------------
+fig, ax = plt.subplots(figsize=(9.5, 6))
+ax.plot(mys_headline["year"], mys_headline["exports"] / 1e12, color=INK, linewidth=1.6, label="Actual, 2001-2025")
+ax.plot(forecast_stress["year"], forecast_stress["baseline_naive_drift"] / 1e12, color=ACCENT_2, linewidth=1.8, linestyle="--", label="Baseline forecast (naive+drift)")
+ax.fill_between(forecast_stress["year"], forecast_stress["scenario_G_energy_shock_lower"] / 1e12,
+                 forecast_stress["scenario_G_energy_shock_upper"] / 1e12, color=ACCENT_2, alpha=0.15,
+                 label="Scenario G: energy price shock band")
+ax.plot(forecast_stress["year"], forecast_stress["scenario_H_recession"] / 1e12, color="#c0392b", linewidth=1.6, linestyle=":", label="Scenario H: global recession")
+ax.plot(forecast_stress["year"], forecast_stress["scenario_D_trade_tension"] / 1e12, color=ACCENT_1, linewidth=1.6, linestyle=":", label="Scenario D: trade-tension escalation")
+ax.legend(loc="upper left", fontsize=8.5)
+ax.set_title("Malaysia export forecast, stress-tested against real historical shock magnitudes", loc="left", fontsize=11)
+ax.set_ylabel("Exports (RM trillion)")
+add_source(fig, "Source: malaysia_export_forecast_stress_test.csv, DERIVED. Shock magnitudes are Malaysia's own actual 2019/2020 export growth and fuel-export-share-weighted energy volatility, not external assumptions. See docs/FORECASTING.md.")
+save(fig, "19_malaysia_forecast_stress_test")
+
+print("\nAll 19 visualisations generated (17 required + 2 added after external review).")

@@ -44,6 +44,10 @@
 
 Four-pillar composite. See `python/analysis/risk_index.py` docstring for full pillar definitions and `LIMITATIONS.md` item 6 for the commodity-exposure pillar's known crudeness.
 
+## `data/processed/risk_index_weight_sensitivity.csv` (added after external review)
+
+Per-country rank and score at the 5th/50th/95th percentile across 1,000 random Dirichlet-weight draws on the risk index's four pillars, plus `rank_band_width`. Covers 48 of 59 countries (those with complete pillar data only). See `METHODOLOGY.md` and `LIMITATIONS.md` item 12.
+
 ## `data/processed/malaysia_*.csv` (multiple files)
 
 - `malaysia_trade_headline_annual.csv`: DOSM, 2001-2025 exports/imports/balance
@@ -56,10 +60,11 @@ Four-pillar composite. See `python/analysis/risk_index.py` docstring for full pi
 - `malaysia_vulnerability_index.csv`; 5-dimension composite (see `MALAYSIA_FRAMEWORK.md`)
 - `malaysia_opportunity_radar.csv`: 4 hypotheses, evidence-graded
 - `malaysia_export_forecast_2026_2030.csv`, `malaysia_export_forecast_backtest.csv`. See `FORECASTING.md`
+- `malaysia_export_forecast_stress_test.csv` (added after external review): baseline forecast plus three shock-scenario paths (H: recession, D: trade tension, G: energy shock band), 2026-2030. See `FORECASTING.md` and `python/forecasting/scenario_stress_test.py` docstring.
 
 ## `data/processed/commodity_prices_monthly.csv` / `commodity_price_volatility.csv`
 
-World Bank Pink Sheet, 16 commodities, nominal USD, monthly. Volatility = annualised standard deviation of monthly log returns.
+World Bank Pink Sheet, 14 commodities, nominal USD, monthly. Volatility = annualised standard deviation of monthly log returns.
 
 ## `data/processed/nickel_monte_carlo_12m.csv`
 

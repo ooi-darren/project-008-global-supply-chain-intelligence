@@ -40,6 +40,24 @@ Monthly nominal-USD prices for 70+ commodities, 1960-present (through July 2026 
 
 Three datasets: `trade_headline` (monthly exports/imports/balance, 2000-2026), `trade_sitc_1d` (monthly exports/imports by SITC section, 2000-2026), `trade_enduse_bec` (monthly retained imports by Broad Economic Category (capital/intermediate/consumer goods) 2010-2026). **Checked directly against the full public data-catalogue file listing (291 files) and confirmed DOSM does not publish a country-partner-level trade breakdown**; Malaysia's bilateral supplier/customer concentration is instead built from UN Comtrade (Malaysia is reporter 458, part of the network above), not from DOSM.
 
+## Added after external review: Strait of Malacca, named companies, external benchmarks
+
+**U.S. Energy Information Administration, "World Oil Transit Chokepoints"** | **Access:** [eia.gov/international/content/analysis/special_topics/World_Oil_Transit_Chokepoints](https://www.eia.gov/international/content/analysis/special_topics/World_Oil_Transit_Chokepoints), updated 2026-03-03 | **License:** U.S. Government work, public domain | **Date accessed:** 2026-08-30
+
+The Strait of Malacca carried an estimated 23.2 million barrels per day of oil in the first half of 2025, equivalent to 29% of total maritime oil flows, the single largest oil-transit chokepoint in the world by volume. At its narrowest point the strait is about 1.7 miles wide (per EIA's earlier 2018 analysis of the same chokepoint, [eia.gov/todayinenergy/detail.php?id=32452](https://www.eia.gov/todayinenergy/detail.php?id=32452)); a closure would require nearly half the world's shipping fleet to reroute around the Indonesian archipelago. Used in `docs/SCENARIO_METHODOLOGY.md` and the README's Malaysia Deep Dive section, this is a real, current, PUBLIC figure directly relevant to Malaysia's own claimed logistics-hub position, previously absent from this project entirely.
+
+**DHL Global Connectedness Report 2026** (NYU Stern, published by DHL) | **Access:** [bernama.com/en/news.php?id=2532728](https://www.bernama.com/en/news.php?id=2532728); full report at dhl.com | **License:** Publicly reported figures | **Date accessed:** 2026-08-30
+
+Malaysia ranks 16th of 180 countries in global connectedness (depth and breadth of trade, capital, information, and people flows), 1st among middle-income economies, and 7th globally in improvement since 2019. Used as an independent external cross-check against this project's own Supply Chain Risk Index finding (Malaysia ranked 30th of 59 on risk specifically, a different construct); see `docs/EXTERNAL_VALIDATION.md`.
+
+**Agility Emerging Markets Logistics Index 2025** | **Access:** [emergingmarketsindex.agility.com](https://emergingmarketsindex.agility.com/) | **Date accessed:** 2026-08-30
+
+Malaysia placed in the top 10 of the 2025 index (down one spot from the prior year), among the countries rated most digitally ready. A second independent external benchmark, used the same way as the DHL figure above.
+
+**Company-level investment reporting** (Infineon, Micron, ASE Technology, Intel in Malaysia) | **Access:** BusinessToday, Malay Mail, TrendForce, and other public news reporting, full list below | **Date accessed:** 2026-08-30
+
+Used to name real, currently-operating (or currently-paused) companies behind Malaysia's electronics/semiconductor export strength, rather than leaving it as an abstract percentage. Sources: [Infineon's RM30 billion Kulim investment (BusinessToday)](https://www.businesstoday.com.my/2025/07/28/infineons-rm30-billion-investment-set-to-create-over-1500-jobs/); [Infineon's third wafer fab module in Kulim (Malay Mail, 2022)](https://www.malaymail.com/news/money/2022/07/08/infineon-technologies-marks-new-milestone-with-the-third-wafer-fab-module-in-kulim/16476); [ASE Technology's fifth Penang plant and ADI-plant acquisition (TrendForce)](https://www.trendforce.com/news/2025/10/22/news-chip-packaging-giant-ase-to-acquire-adis-penang-plant-expand-southeast-asia-footprint-by-1h26/); Intel's Penang advanced-packaging project paused as of February 2025 per the same TrendForce reporting, and Micron's Muar/Prai/Batu Kawan facility history per public company and news reporting. These are named as illustrative, publicly reported examples, not a systematic company-level dataset this project collected itself, a distinction stated explicitly in `docs/LIMITATIONS.md`.
+
 ## Sources Evaluated but Not Used
 
 - **AIS / satellite / remote-sensing vessel-tracking data**: the brief explicitly permits investigating this "where legally accessible," but genuine AIS feeds are commercial/restricted at any meaningful coverage, so not pursued. Shipping-route exposure is proxied instead with World Bank container port traffic (a real, if coarser, PUBLIC substitute). See `LIMITATIONS.md`.

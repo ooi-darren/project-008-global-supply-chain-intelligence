@@ -43,6 +43,12 @@ scored on remaining pillars if one is missing, na_pillars recorded).
 Sensitivity check: alternative version double-weighting Trade Partner
 Concentration (the pillar most directly tied to "dependency" in the
 project's own core research question), Spearman rank correlation reported.
+
+Also runs a 1,000-draw weight-sensitivity Monte Carlo (random Dirichlet
+weight vectors across all four pillars) to report a full distribution of
+each country's rank and the resulting Spearman rho against the base
+equal-weighted ranking, rather than relying on the single alternative check
+above alone. See risk_index_weight_sensitivity.csv.
 """
 import pandas as pd
 import numpy as np
@@ -143,6 +149,53 @@ def main():
     print(result[["rank", "Country", "Region", "supply_chain_risk_score"]].head(15).to_string(index=False))
     print("\nLowest supply-chain risk (bottom 10):")
     print(result[["rank", "Country", "Region", "supply_chain_risk_score"]].tail(10).to_string(index=False))
+
+    # -------------------------------------------------------------------
+    # Weight-sensitivity Monte Carlo (added after external review: a single
+    # alternative-weighting check is a start, not a real sensitivity
+    # analysis -- this instead draws 1,000 random weight vectors from a
+    # symmetric Dirichlet(1,1,1,1) distribution (uniform over the simplex
+    # of all possible non-negative weight combinations that sum to 1, so no
+    # pillar is privileged a priori), recomputes the composite score and
+    # full ranking under each draw, and reports the resulting Spearman rho
+    # distribution plus each country's rank range across all 1,000 draws.
+    # This directly answers "how much does the equal-weighting choice
+    # actually matter" with a distribution instead of one data point.
+    # -------------------------------------------------------------------
+    rng = np.random.default_rng(seed=8)
+    n_draws = 1000
+    complete = result.dropna(subset=score_cols).reset_index(drop=True)
+    weight_draws = rng.dirichlet(alpha=np.ones(4), size=n_draws)  # shape (n_draws, 4)
+    pillar_matrix = complete[score_cols].to_numpy()  # shape (n_countries, 4)
+    draw_scores = pillar_matrix @ weight_draws.T  # shape (n_countries, n_draws)
+    draw_ranks = pd.DataFrame(draw_scores).rank(ascending=False, method="min").to_numpy()
+
+    rhos = np.array([spearmanr(complete["supply_chain_risk_score"], draw_scores[:, i]).statistic
+                      for i in range(n_draws)])
+
+    sens = pd.DataFrame({
+        "ISO3": complete["ISO3"], "Country": complete["Country"], "Region": complete["Region"],
+        "base_rank": complete["rank"],
+        "rank_p5": np.percentile(draw_ranks, 5, axis=1),
+        "rank_p50": np.percentile(draw_ranks, 50, axis=1),
+        "rank_p95": np.percentile(draw_ranks, 95, axis=1),
+        "score_p5": np.percentile(draw_scores, 5, axis=1),
+        "score_p50": np.percentile(draw_scores, 50, axis=1),
+        "score_p95": np.percentile(draw_scores, 95, axis=1),
+    })
+    sens["rank_band_width"] = sens["rank_p95"] - sens["rank_p5"]
+    sens = sens.sort_values("base_rank").reset_index(drop=True)
+    sens.to_csv(os.path.join(OUT_DIR, "risk_index_weight_sensitivity.csv"), index=False)
+
+    print(f"\nWeight-sensitivity Monte Carlo ({n_draws} random Dirichlet weight draws, n={len(complete)} countries):")
+    print(f"  Spearman rho vs base ranking: min={rhos.min():.3f}, median={np.median(rhos):.3f}, "
+          f"5th pct={np.percentile(rhos, 5):.3f}, max={rhos.max():.3f}")
+    mys_row = sens[sens["Country"].str.contains("Malaysia", na=False)]
+    if not mys_row.empty:
+        r = mys_row.iloc[0]
+        print(f"  Malaysia: base rank {int(r['base_rank'])}, "
+              f"90% band across weight draws = rank {int(r['rank_p5'])}-{int(r['rank_p95'])} of {len(complete)}")
+    print(f"  Saved risk_index_weight_sensitivity.csv: {sens.shape}")
 
 
 if __name__ == "__main__":

@@ -38,12 +38,32 @@ Section 16 lists many candidate forecast targets (trade, exports, imports, commo
 
 ## 9. Scenarios Are Structured Reasoning, Not Probability-Weighted Predictions
 
-Every scenario in `docs/SCENARIO_METHODOLOGY.md` is explicitly qualitative-to-semi-quantitative, grounded in this project's own data where a real comparable exists (labelled "real anchor") and explicitly marked illustrative where none does. No scenario carries a stated probability. The Malaysia 2030+ scenario impact scores (Visualisation 14) are a documented judgment call, not a model output, stated as such in the chart's own footnote.
+Every scenario in `docs/SCENARIO_METHODOLOGY.md` is explicitly qualitative-to-semi-quantitative, grounded in this project's own data where a real comparable exists (labelled "real anchor") and explicitly marked illustrative where none does. No scenario carries a stated *probability*. The shock-simulation table does now carry a qualitative High/Medium/Low *likelihood* judgment (added after external review, so a reader has some basis for prioritisation), explicitly labelled as a documented judgment call, not a calibrated probability. The Malaysia 2030+ scenario impact scores (Visualisation 14) are, likewise, a documented judgment call, not a model output, stated as such in the chart's own footnote, and still carry no likelihood tag at all.
 
 ## 10. Currency and Price-Level Discipline
 
 Commodity prices are kept nominal-USD (not inflation-deflated) deliberately, since deflating would obscure the actual shock magnitude this project needs to see (e.g. the real 2022 gas-price spike). GDP and trade-value comparisons across countries use PPP where the comparison is about income levels and nominal USD where the comparison is about market size, following the same discipline established in this portfolio's Project 007. Malaysia's own export/import figures are in the currency DOSM itself publishes them in (RM), not converted, to avoid introducing an extra exchange-rate assumption into a series that is analysed as its own time series, not compared cross-country.
 
-## 11. What This Project Does Not Claim
+## 11. External Validation of the Risk Index Is Qualitative, Not a Formal Benchmark
+
+`docs/EXTERNAL_VALIDATION.md` (added after external review) cross-checks Malaysia's placement against two independently published indices (DHL Global Connectedness Report 2026, Agility Emerging Markets Logistics Index 2025) and finds it directionally consistent, not contradictory. This is a qualitative triangulation check, not a formal quantitative benchmark: those indices' full underlying country-level data is commercial/licensed or not structured for a direct pillar-by-pillar comparison against this project's own four pillars, so no correlation coefficient is computed between this project's risk ranking and either external index.
+
+## 12. The Weight-Sensitivity Monte Carlo Covers 48 of 59 Countries, Not All 59
+
+The 1,000-draw random-weight sensitivity analysis on the Supply Chain Risk Index (`risk_index_weight_sensitivity.csv`, added after external review) only includes the 48 countries with a complete, non-missing value on all four pillars; 11 countries missing at least one pillar (usually the periodic LPI) are excluded from this specific analysis, though they remain in the main risk index itself (scored on their available pillars, as documented in item 6 above). The rank bands reported are therefore relative to this 48-country subset, not the full 59.
+
+## 13. The Forecast Stress Test Uses Simplifying, Documented Pass-Through Assumptions
+
+The scenario stress test (`malaysia_export_forecast_stress_test.csv`, added after external review) derives its shock magnitudes from this project's own real data (Malaysia's actual 2019/2020 export growth, and a fuel-export-share-weighted energy-volatility figure), which is a genuine strength over an assumed magnitude. But the mechanism applying each shock, a one-time level shift for Scenarios D and H, a symmetric multiplicative band for Scenario G, is a simplifying convention, not a modelled economic transmission channel (no input-output table, no elasticity estimate). Read the resulting 2030 figures as an illustrative stress range grounded in real historical magnitudes, not a structural forecast of how each shock would actually propagate through Malaysia's economy.
+
+## 14. Only Nickel Has Both a Concentration Figure and a Matching Price Series for Monte Carlo Simulation
+
+Of the 13 critical materials tracked, only Nickel has both a real USGS production-concentration figure and a matching World Bank Pink Sheet price series, which is why the Monte Carlo simulation (Visualisation 7) covers Nickel alone. The four highest-concentration materials actually flagged by this project (Gallium, Tungsten, Graphite, Cobalt) have production data but no matching price series in the Pink Sheet's coverage, so they have no equivalent quantified price-risk simulation. This is named here explicitly as the natural next data source to pursue, not left as a quiet gap.
+
+## 15. Named Companies Are Illustrative Examples, Not a Systematic Dataset
+
+The README and Malaysia Deep Dive materials name specific companies (Infineon, Micron, ASE Technology, Intel) operating in Malaysia's electronics/semiconductor sector, sourced from public news reporting (`docs/SOURCES.md`), to ground the SITC-level export statistics in real, recognisable examples. This is illustrative grounding, not a systematic company-level dataset this project collected and verified itself; it should not be read as a claim that these four companies are the only, or even the largest, players in Malaysia's electronics sector.
+
+## 16. What This Project Does Not Claim
 
 This project does not claim to have identified every material or country that matters, does not claim its 13-material or 59/57-country selections are the only defensible choices, and does not claim any forecast or scenario would replicate identically with a different reasonable methodological choice. It claims to have applied a transparent, reproducible, evidence-based methodology to real public data, verified its own pipeline against known real-world facts wherever possible (China's rare-earth dominance, DRC's cobalt dominance, Singapore's ASEAN logistics lead, Indonesia's nickel rise all appear correctly in this project's own output), and to report honestly where that methodology's limits are.
