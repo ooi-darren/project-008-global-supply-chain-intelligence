@@ -2,12 +2,25 @@
 """
 Global trade network analysis for Project 008.
 
-Builds a directed, weighted trade network from the UN Comtrade bilateral
-data (data/raw/comtrade_bilateral_trade_raw.csv: 59 major economies, total
-trade, 2016 and 2023, export flows only used as edges -- an export from A to
-B and an import by B from A are two independently-reported observations of
-the same physical flow; using exports as the edge weight avoids double
-reporting and is the more commonly-audited direction in trade statistics).
+Builds a directed, weighted trade network from data/processed/
+trade_network_edges_export.csv (2016 and 2023, one resolved export edge per
+country pair): an export from A to B and an import by B from A are two
+independently-reported observations of the same physical flow; using
+exports as the edge weight avoids double reporting and is the more
+commonly-audited direction in trade statistics.
+
+Genuinely covers all 59 network countries as of the fix added after
+external review: UN Comtrade's free tier never returns the United States,
+India, Belgium, or Ethiopia as a reporter (nor, for these four, as a
+partner in any other country's data either), so their edges are resolved
+from OECD's Bilateral Trade in Goods database instead (their own export
+report where they are the exporter; their own import report, used as a
+mirror, where they are the importer and no other source exists) -- see
+python/cleaning/merge_bilateral_trade.py's docstring for the exact
+three-rule resolution and python/data_collection/oecd_missing_reporters_
+trade.py for the collection itself. Before this fix, these four countries
+were absent from this network entirely (docs/LIMITATIONS.md item 1
+previously described only two of the four).
 
 Computes, per country per year:
   - weighted in-degree / out-degree (total imports/exports within the network)
@@ -26,17 +39,17 @@ import pandas as pd
 import networkx as nx
 import os
 
-RAW = "data/raw/comtrade_bilateral_trade_raw.csv"
+EDGES = "data/processed/trade_network_edges_export.csv"
 OUT_DIR = "data/processed"
 os.makedirs(OUT_DIR, exist_ok=True)
 
 
 def build_graph(df, period):
     g = nx.DiGraph()
-    sub = df[(df["period"].astype(str) == str(period)) & (df["flow"] == "X")]
+    sub = df[df["period"].astype(str) == str(period)]
     for _, row in sub.iterrows():
         # edge A->B: A exports to B, weight = export value (USD)
-        g.add_edge(int(row["reporterCode"]), int(row["partnerCode"]), weight=row["primaryValue"])
+        g.add_edge(int(row["exporterCode"]), int(row["importerCode"]), weight=row["primaryValue"])
     return g
 
 
@@ -65,7 +78,7 @@ def centrality_table(g, code_to_iso):
 
 
 def main():
-    df = pd.read_csv(RAW)
+    df = pd.read_csv(EDGES)
     countries = pd.read_csv("data/external/network_countries.csv")
     code_to_iso = dict(zip(countries["comtradeReporterCode"], countries["ISO3"]))
     code_to_name = dict(zip(countries["comtradeReporterCode"], countries["Country"]))

@@ -29,7 +29,23 @@
 | `reporterCode` / `partnerCode` | UN Comtrade numeric country codes; map via `data/external/network_countries.csv` |
 | `primaryValue` | Trade value, current USD, aggregate (motCode=0, partner2Code=0, customsCode=C00. See `SOURCES.md` for why) |
 
-**US and India absent**. See `LIMITATIONS.md` item 1.
+**Genuinely covers only 55 of 59 target countries as a reporter** (United States, India, Belgium, Ethiopia are absent, verified directly, not assumed). Left untouched by every other script in this project; see the two files below for the backfilled, analysis-ready version. See `LIMITATIONS.md` item 1 and `DATA_QUALITY.md` item 3.
+
+## `data/raw/oecd_missing_reporters_raw.csv` (OECD BTiGE, added after external review)
+
+| Column | Notes |
+|---|---|
+| `period`, `flow`, `reporterCode`, `partnerCode`, `primaryValue` | Same schema as the Comtrade file above, for direct compatibility |
+
+Backfills the four countries missing from the file above (USA, IND, BEL, ETH as `reporterCode` 841/356/58/230), both flows, both periods, against all other 58 network countries. See `python/data_collection/oecd_missing_reporters_trade.py` docstring and `SOURCES.md`.
+
+## `data/processed/bilateral_trade_network_full.csv` (merged, added after external review)
+
+The two files above concatenated, with a `source` column (`UN_COMTRADE` or `OECD_BTIGE`) so the two are never silently blended. Genuinely covers all 59 network countries as a reporter. See `python/cleaning/merge_bilateral_trade.py`.
+
+## `data/processed/trade_network_edges_export.csv` (resolved export edges, added after external review)
+
+The file most downstream scripts (`trade_network.py`, `risk_index.py`, `malaysia_deep_dive.py`, chart 02) actually read for bilateral trade. One row per (period, exporterCode, importerCode): the single best-available source for that directed export edge, resolved by the three-rule logic in `python/cleaning/merge_bilateral_trade.py`'s docstring, tagged in `edge_source` (`DIRECT_EXPORT_COMTRADE`, `DIRECT_EXPORT_OECD`, or `MIRROR_IMPORT_OECD`, the last used only where no direct export report exists anywhere in this project's data). No duplicate (period, exporter, importer) rows by construction (the merge script raises an error if any are found).
 
 ## `data/processed/critical_materials_by_country.csv` / `critical_materials_concentration.csv` (USGS)
 
@@ -72,4 +88,4 @@ Two bootstrap methods (independent, 6-month block), 10,000 simulations each. See
 
 ## `data/processed/trade_network_centrality.csv` / `trade_network_pagerank_change.csv`
 
-Betweenness, eigenvector centrality, and PageRank per country per period (2016, 2023), computed on the 57-country bilateral network. See `python/networks/trade_network.py`.
+Betweenness, eigenvector centrality, and PageRank per country per period (2016, 2023), computed on the genuinely-complete 59-country bilateral network (see `docs/DATA_QUALITY.md` item 3). See `python/networks/trade_network.py`.

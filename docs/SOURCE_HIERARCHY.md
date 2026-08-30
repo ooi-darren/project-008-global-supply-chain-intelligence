@@ -13,6 +13,7 @@ How sources were evaluated and prioritised in this project, per the brief's Sect
 
 5. **World Bank Commodity Markets (Pink Sheet)**: Tier 1-equivalent in authority (same publisher), used specifically because none of the above four sources publish commodity price time series.
 6. **U.S. Energy Information Administration** (added after external review, for the Strait of Malacca chokepoint figures): a Tier-1-equivalent government statistical authority, used for a single well-defined figure (oil transit volume through a named chokepoint) this project's four core sources do not cover, the same "fill a specific gap" role as the Pink Sheet above.
+7. **OECD Bilateral Trade in Goods (BTiGE)** (added after external review, to backfill the four countries UN Comtrade's free tier structurally excludes, see `LIMITATIONS.md` item 1): Tier 1-equivalent in authority, sourced by OECD directly from UN Comtrade's own institutional-access data, used specifically because it fills a gap the primary trade source (UN Comtrade's free tier) cannot, the same role as items 5 and 6.
 
 ## Tier 3 (illustrative grounding, not a quantitative input)
 
@@ -25,6 +26,8 @@ Added after external review, to name specific companies and independently benchm
 
 - **WTO tariff-line data**: real Tier 1 authority, but not pursued given the time budget already spent resolving UN Comtrade's undocumented data-quality quirks; named as a scope decision in `SOURCES.md`, not a quality judgment against WTO data.
 - **AIS/satellite data**: would be Tier 1 if freely and legitimately accessible, but genuine feeds are commercial/restricted, so not used, per the brief's own instruction to only use legitimately accessible data.
+- **US Census Bureau International Trade API**: evaluated as an alternative backfill source for the United States specifically; genuinely has bilateral country-partner data, but requires a free registered API key, unlike every other source this project uses. OECD BTiGE (item 7 above) gives materially the same coverage without that registration step, so it was used instead.
+- **India DGCIS / TRADESTAT**: evaluated as an alternative backfill source for India specifically; not used because its country-wise bilateral data only goes back to FY2017-18 (would not cover this project's 2016 baseline year) and it is a manual web form, not a queryable API.
 - **Industry/consultancy reports** (e.g. shipping-line freight-rate commentary): the brief permits these to supplement, not replace, official statistical evidence. None were used as a primary quantitative input in this project; where a "why is this happening" narrative draws on such sources for context, it is kept separate from the PUBLIC/DERIVED quantitative classification, following the same convention as the rest of this portfolio.
 
 ## Decision Rule Applied Throughout

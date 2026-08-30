@@ -2,9 +2,9 @@
 
 ## Bilateral Trade Network (UN Comtrade)
 
-- **59 economies** in the target network (`data/external/network_countries.csv`); **57 with bilateral edge data** (United States and India structurally excluded from the free-tier endpoint. See `LIMITATIONS.md` item 1).
+- **59 economies** in the target network (`data/external/network_countries.csv`); **all 59 with bilateral edge data** as of the fix added after external review (see below). UN Comtrade's free tier alone only ever returned **55** as a reporter.
 - Two periods: **2016** and **2023**.
-- Within the 57, individual reporters occasionally show 0 rows for a given (flow, period), a real reporting gap for that specific country/year, not a systematic exclusion like the US/India case. Examples observed during collection: Ethiopia (2016 exports), Iran (2023 exports), Bangladesh (2023 exports), Cuba (2023 imports), Belgium (2023 imports). These are treated as genuine missing data points for that country-year, consistent with how this portfolio handles missing-data cells elsewhere (stated explicitly, not imputed).
+- **Correction to this document's own earlier claim, found by checking it against the raw data rather than trusting it:** an earlier version of this section listed "Ethiopia (2016 exports)" and "Belgium (2023 imports)" as isolated, one-off missing-data cells alongside genuinely isolated gaps like Iran (2023 exports), Bangladesh (2023 exports), and Cuba (2023 imports). That framing was wrong for Ethiopia and Belgium specifically: both had **zero rows as a reporter across every flow and period**, and zero rows as a partner in any other country's data either, a complete, systematic exclusion exactly like the already-documented US/India case, not an isolated country-year gap. This was only caught while building the OECD-based fix for USA and India and verifying the resulting reporter count directly (`comtrade["reporterCode"].nunique()` returned 55, not the 57 this document itself had been claiming). Iran (2023 exports), Bangladesh (2023 exports), and Cuba (2023 imports) remain genuine, isolated single-cell reporting gaps, unaffected by this correction. See `docs/DATA_QUALITY.md` item 3 for the full discovery-and-fix account.
 
 ## World Bank Panel
 

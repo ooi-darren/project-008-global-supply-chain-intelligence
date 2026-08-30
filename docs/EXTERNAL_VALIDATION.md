@@ -4,7 +4,7 @@ Added after external review, which flagged that this project's Supply Chain Risk
 
 ## What Was Compared
 
-This project's Supply Chain Risk Index ranks Malaysia **30th of 59** economies on structural supply-chain risk (import dependency, logistics fragility, trade-partner concentration, commodity exposure), genuinely mid-pack. Two independent, publicly published indices were checked for directional consistency:
+This project's Supply Chain Risk Index ranks Malaysia **29th of 59** economies on structural supply-chain risk (import dependency, logistics fragility, trade-partner concentration, commodity exposure), genuinely mid-pack. Two independent, publicly published indices were checked for directional consistency:
 
 - **DHL Global Connectedness Report 2026** (NYU Stern / DHL): Malaysia ranks **16th of 180 countries** in global connectedness (depth and breadth of trade, capital, information, and people flows), 1st among middle-income economies, and 7th globally in improvement since 2019.
 - **Agility Emerging Markets Logistics Index 2026**: Malaysia ranks **5th of 50** emerging markets on logistics, business fundamentals, and digital readiness, no change from the prior year. (Verified by fetching Agility's own rankings page directly; an earlier draft of this project cited a different, incorrect figure sourced from a secondary summary, corrected and documented in `docs/SOURCES.md`.)

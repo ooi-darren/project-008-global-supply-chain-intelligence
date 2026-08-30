@@ -14,7 +14,7 @@
 
 ## Executive Summary
 
-This project builds a global supply-chain intelligence system from UN Comtrade, USGS, World Bank, and Malaysia's DOSM data to test where global trade structure has actually shifted since 2016, where raw-material supply is genuinely concentrated, and what that means for Malaysia specifically, rather than relying on headline narratives. A 57-country bilateral trade network (three independent double-counting dimensions in the UN Comtrade free tier identified and corrected; the United States and India are structurally absent from that same free tier, not from this project's pipeline) shows that network centrality and raw trade volume diverge sharply: the UAE gained more structural importance than any other economy between 2016 and 2023 (+29% PageRank), a real, data-driven signature of Gulf trade diversification, while the UK, Hong Kong, and Singapore lost the most (-21% to -26%). A 13-material critical-minerals concentration index, built from real 2023 USGS production data, finds four materials, Gallium (China, 98%), Tungsten (China, 84%), Graphite (China, 79%), and Cobalt (DR Congo, 76%), far above the standard highly-concentrated HHI threshold of 2,500, with Nickel (Indonesia, 60%) the clearest live case of concentration still rising. A transparent, sensitivity-tested four-pillar Supply Chain Risk Index (Spearman ρ=0.976 against an alternative weighting) ranks 59 economies; Malaysia sits mid-pack at 30th, with its own supplier and customer trade concentration rising, not falling, between 2016 and 2023, a finding that runs against the "China+1 diversification" narrative. A Malaysia export forecast to 2030, validated on a genuine five-year rolling backtest rather than a single train/test split, finds that the simplest model with a trend, naive-with-drift, beats both ARIMA and ETS on real out-of-sample accuracy, reported honestly rather than replaced with a more impressive-looking result, forecasting RM1.87 trillion by 2030 (90% band: RM1.53-2.21 trillion). A companion 10,000-path Monte Carlo simulation on nickel prices, the one critical material with both a real production-concentration figure and a matching price history, puts the 12-month probability of a greater-than-20% price move at 25-27% (increase) versus 13-17% (decrease).
+This project builds a global supply-chain intelligence system from UN Comtrade, OECD, USGS, World Bank, and Malaysia's DOSM data to test where global trade structure has actually shifted since 2016, where raw-material supply is genuinely concentrated, and what that means for Malaysia specifically, rather than relying on headline narratives. A genuinely complete 59-country bilateral trade network (three independent double-counting dimensions in the UN Comtrade free tier identified and corrected; UN Comtrade's free tier structurally excludes four of the 59 target countries entirely, United States, India, Belgium, and Ethiopia, resolved with a second, no-key public source, OECD's Bilateral Trade in Goods database, rather than left as a gap, see below) shows that network centrality and raw trade volume diverge sharply: India gained more structural importance than any other economy between 2016 and 2023 (+44% PageRank), with the Netherlands, Belgium, and Poland also rising fast, while the UK, Hong Kong SAR, and Japan lost the most (-17% to -24%), and Iran lost the most of all (-43%). A 13-material critical-minerals concentration index, built from real 2023 USGS production data, finds four materials, Gallium (China, 98%), Tungsten (China, 84%), Graphite (China, 79%), and Cobalt (DR Congo, 76%), far above the standard highly-concentrated HHI threshold of 2,500, with Nickel (Indonesia, 60%) the clearest live case of concentration still rising. A transparent, sensitivity-tested four-pillar Supply Chain Risk Index (Spearman ρ=0.986 against an alternative weighting) ranks all 59 economies; Malaysia sits mid-pack at 29th, with its own supplier concentration rising sharply (HHI 1,235 to 1,646, 2016-2023) once the United States is correctly included as a real trading partner for the first time, a finding that runs against the "China+1 diversification" narrative on the supplier side specifically. A Malaysia export forecast to 2030, validated on a genuine five-year rolling backtest rather than a single train/test split, finds that the simplest model with a trend, naive-with-drift, beats both ARIMA and ETS on real out-of-sample accuracy, reported honestly rather than replaced with a more impressive-looking result, forecasting RM1.87 trillion by 2030 (90% band: RM1.53-2.21 trillion). A companion 10,000-path Monte Carlo simulation on nickel prices, the one critical material with both a real production-concentration figure and a matching price history, puts the 12-month probability of a greater-than-20% price move at 25-27% (increase) versus 13-17% (decrease).
 
 ## Research Question
 
@@ -22,17 +22,17 @@ This project builds a global supply-chain intelligence system from UN Comtrade, 
 
 ## Key Findings
 
-**1. Network importance and raw trade volume are not the same thing.** Between 2016 and 2023, the UAE gained the most network importance of any economy (+29% PageRank), followed by China (+5%), Poland, Turkiye, Saudi Arabia, and Vietnam, a real, data-driven signature of the "China+1" diversification and Gulf-diversification narratives, not an assumption. The UK (-26%), Hong Kong (-21%), Singapore (-26%), and Japan (-17%) lost the most network importance over the same window.
+**1. Network importance and raw trade volume are not the same thing.** Between 2016 and 2023, India gained the most network importance of any economy (+44% PageRank), followed by the Netherlands, Belgium, Poland, the United States, and Mexico. The UK (-22%), Hong Kong SAR (-24%), and Japan (-18%) lost the most network importance over the same window, and Iran lost the most of all (-43%). This finding changed substantially once the United States, India, Belgium, and Ethiopia, all four structurally excluded from UN Comtrade's free tier, were correctly added to the network (see Finding 6 and `docs/DATA_QUALITY.md`); an earlier version of this project, built on the 55 countries Comtrade's free tier actually returns, had reported the UAE as the biggest gainer, a finding that does not survive once the full network is used.
 
 **2. Four materials are highly concentrated by any standard measure.** Gallium (China, 98% of world mine production, HHI=9,626), Tungsten (China, 84%, HHI=7,166), Graphite (China, 79%, HHI=6,314), and Cobalt (DR Congo, 76%, HHI=5,822) are all far above the standard "highly concentrated" HHI threshold of 2,500. Nickel (Indonesia, 60%, HHI=3,837) is a genuine, currently unfolding case of concentration rising fast on the back of Indonesia's export/downstreaming policy.
 
-**3. Malaysia's own trade partner concentration rose, not fell, 2016→2023**: supplier HHI from 1,125 to 1,202, customer HHI from 915 to 975. Both remain in the "unconcentrated" range (below 1,500) but the direction runs against a simple "diversification" narrative one might assume from "China+1" headlines.
+**3. Malaysia's supplier concentration rose sharply, 2016→2023; its customer concentration held roughly flat, a genuinely mixed picture, not a uniform trend.** Supplier HHI rose from 1,235 to 1,646 (still "unconcentrated," below 1,500 only in 2016; by 2023 it has crossed into the edge of "moderately concentrated" territory); customer HHI moved from 914 to 880, essentially flat, slightly down. The supplier-side result runs directly against a simple "diversification" narrative; the customer-side result does not support either a rising- or falling-concentration story strongly enough to claim one. (An earlier version of this project, missing the United States entirely, reported both HHIs rising; correctly including the United States changes the customer-side reading specifically, see Finding 6.)
 
-**4. China is Malaysia's single largest supplier (27.2% of imports, 2023) and second-largest customer (17.4%, behind Singapore's 19.8%).** Both figures come directly from bilateral UN Comtrade data, not an assumption.
+**4. China is Malaysia's single largest supplier (34.1% of imports, 2023); Singapore and the United States are its top two customers, with China a close third.** Singapore is Malaysia's largest customer (15.8%), the United States is a very close second (15.6%), and China is third (13.9%), figures that come directly from bilateral trade data. Before this project correctly included the United States (see Finding 6), it had reported China as Malaysia's second-largest customer behind Singapore, missing the US relationship entirely; that specific finding no longer holds.
 
 **5. A validated backtest, not a dramatic model, wins the Malaysia export forecast.** Four models were compared on a genuine 5-year rolling backtest; the simple naive-with-drift baseline beat both ARIMA and ETS on out-of-sample RMSE, reported honestly per this project's own research-integrity standard rather than hidden. Forward forecast: RM 1.87 trillion by 2030 (90% band: RM 1.53-2.21 trillion).
 
-**6. Malaysia ranks 30th of 59 economies on this project's Supply Chain Risk Index**, mid-pack, not a standout on either end, but that position is not as stable as a single ranking suggests. A 1,000-draw weight-sensitivity Monte Carlo (added after external review) shows Malaysia's rank actually ranges from 5th to 33rd of 48 comparable countries depending on which of the four risk pillars is weighted most heavily, a genuinely wider band than most other countries in the sample. The highest-risk economies (Cuba, Mongolia, Iraq, Hong Kong, Macao) share small/concentrated/geopolitically-exposed profiles; the lowest-risk (Germany, Canada, China, Japan, France) are large, diversified, logistically strong economies.
+**6. Malaysia ranks 29th of 59 economies on this project's Supply Chain Risk Index**, mid-pack, not a standout on either end, but that position is not as stable as a single ranking suggests. A 1,000-draw weight-sensitivity Monte Carlo (added after external review) shows Malaysia's rank actually ranges from 6th to 41st of 56 comparable countries depending on which of the four risk pillars is weighted most heavily, a genuinely wide band. The highest-risk economies (Cuba, Iran, Mongolia, Russia, Hong Kong SAR) share small/concentrated/geopolitically-exposed profiles; the lowest-risk (Germany, United States, Japan, France, China) are large, diversified, logistically strong economies. **A real, previously-hidden data gap, found and fixed while building this project further:** this network was originally believed to cover 57 of 59 target countries, missing only the United States and India (both structurally excluded from UN Comtrade's free tier). Verifying that "57 of 59" claim against the raw data surfaced two more countries with zero rows as a Comtrade reporter, Belgium and Ethiopia, previously undocumented and not even visible as a trading partner in any other country's data. All four are now included via OECD's Bilateral Trade in Goods database (also free, no API key required), giving this project a genuinely complete 59-country network for the first time, and changing several of its own headline findings in the process, most visibly Finding 1 and Finding 4 above and Mexico's appearance as a newly-visible top-10 highest-risk economy (its real, well-known trade concentration toward the US was invisible in this index before the US itself was included as a country). See `docs/DATA_QUALITY.md` for the full account.
 
 **7. Malaysia's imports are 86% production inputs, not final consumption** (capital + intermediate goods share of retained imports, DOSM BEC data, 2025), direct evidence that Malaysia is deeply embedded in upstream manufacturing supply chains, not primarily an import-for-consumption economy.
 
@@ -45,8 +45,8 @@ Imagine every country in the world as a person in a giant trading network, buyin
 Three things this project found that matter for everyone, not just economists:
 
 - **A few countries make almost all of some critical materials.** Nearly all the world's gallium (used in chips) comes from China. Most cobalt (used in EV batteries) comes from one country, DR Congo. If either country had a problem, a lot of the world's electronics and EV supply chains would feel it fast; this project measured exactly how concentrated each material really is, not just repeated the headline.
-- **Being "connected" to the trade network matters as much as being "big."** A country can trade a huge amount of stuff and still not be a particularly *important* node in the network; this project used the same kind of network math that powers things like Google's search ranking (PageRank) to measure this properly, and found some real surprises: the UAE's importance in the network jumped nearly 30% in just seven years.
-- **Malaysia buys from and sells to a lot of different countries, but China matters most on both sides**: Malaysia's single biggest supplier and second-biggest customer, confirmed directly from real UN trade data, not assumed from news headlines.
+- **Being "connected" to the trade network matters as much as being "big."** A country can trade a huge amount of stuff and still not be a particularly *important* node in the network; this project used the same kind of network math that powers things like Google's search ranking (PageRank) to measure this properly, and found some real surprises: India's importance in the network jumped over 44% in just seven years, the biggest rise of any country tracked.
+- **Malaysia buys from and sells to a lot of different countries. China is clearly its biggest supplier, but on the customer side it's now a close three-way race**: Singapore, the United States, and China are all within two percentage points of each other as Malaysia's top export markets, confirmed directly from real trade data, not assumed from news headlines. (An earlier version of this project had missed the United States entirely here, a real gap in the underlying free data source, found and fixed, see the Trade Network Analysis section below.)
 
 This project also makes a forecast about Malaysia's exports out to 2030, and honestly reports that the simplest possible forecasting method (just "keep growing at the recent average rate") beat two much fancier statistical models when tested properly, which is itself a useful, honest finding. (New to terms like "HHI," "PageRank," or "Monte Carlo"? See the Glossary near the bottom.)
 
@@ -56,21 +56,21 @@ Businesses and policymakers routinely make claims about supply-chain "resilience
 
 ## Global Research Coverage
 
-- **59 major economies** targeted for the bilateral trade network; **57 effective** for bilateral edges specifically (the United States and India are structurally absent from UN Comtrade's free tier as both reporter and partner, verified directly, not assumed; see `docs/LIMITATIONS.md`)
-- **2 network years** (2016, 2023) × 2 trade flows, **236 API calls**, **10,911 bilateral trade rows** kept after identifying and correcting three independent double-counting dimensions in the raw API response (transport mode, re-export/transit country, customs regime)
+- **59 major economies**, genuinely all 59 for the bilateral trade network as of the fix added after external review (UN Comtrade's free tier structurally excludes four of them entirely, United States, India, Belgium, Ethiopia, both as reporter and partner, verified directly; backfilled from OECD's Bilateral Trade in Goods database, also free, no API key; see `docs/DATA_QUALITY.md` and `docs/LIMITATIONS.md`)
+- **2 network years** (2016, 2023) × 2 trade flows, **236 UN Comtrade API calls + 16 OECD API calls**, **11,826 bilateral trade rows** kept after identifying and correcting three independent double-counting dimensions in the raw UN Comtrade response (transport mode, re-export/transit country, customs regime), resolved into **6,255 clean directed export edges** covering all 59 countries with no duplication (see `docs/DATA_QUALITY.md` for the exact resolution rule)
 - **13 critical materials**, each selected against 4 documented selection criteria, concentration (HHI/CR3/CR5) computed from real 2023 country-level production data (USGS Mineral Commodity Summaries 2025, 184 country-material rows)
 - **17 World Bank indicators** (trade openness, logistics, GDP, demographics) across **2013-2025**, a 2,821-row country-year panel
 - **14 priority commodities**, monthly nominal prices since the 1960s (11,066 rows), current through July 2026 (World Bank Commodity Markets "Pink Sheet")
-- **5 Malaysia-specific DOSM datasets** (trade headline 2001-2025, 275-row SITC detail, BEC end-use production-input breakdown) plus dedicated UN Comtrade bilateral pulls (reporter code 458)
-- **5 independent public data sources** in total, none behind a paywall or requiring a registered API key; full citations and licence terms in `docs/SOURCES.md`
+- **5 Malaysia-specific DOSM datasets** (trade headline 2001-2025, 275-row SITC detail, BEC end-use production-input breakdown) plus dedicated bilateral pulls (reporter code 458)
+- **6 independent public data sources** in total, none behind a paywall (one, the US Census API, would have required a free registered key; used the OECD's Bilateral Trade in Goods database instead, which needs neither); full citations and licence terms in `docs/SOURCES.md`
 - **19 visualisations** (17 required + 2 added after external review: a risk-index weight-sensitivity chart and a forecast stress test), **8 narrative notebooks**, **11 methodology/limitations/sources documents**
 
 ## Research Framework
 
 ```
-Data Acquisition (UN Comtrade, World Bank, USGS, Pink Sheet, DOSM)
+Data Acquisition (UN Comtrade, OECD, World Bank, USGS, Pink Sheet, DOSM)
         │
-Data Engineering (triple-double-counting fixes, region mapping, master panel, critical-materials table)
+Data Engineering (triple-double-counting fixes, missing-reporter backfill, region mapping, master panel, critical-materials table)
         │
 Network Analysis (directed export graph, betweenness/eigenvector/PageRank, 2016 vs 2023)
         │
@@ -103,7 +103,7 @@ Country-level import dependency, logistics fragility, trade concentration, and t
 
 ## Trade Network Analysis
 
-57-country bilateral network (United States and India structurally excluded from the free-tier data source. See `docs/LIMITATIONS.md`), betweenness/eigenvector centrality and PageRank computed via NetworkX, compared 2016 vs. 2023 (Visualisations 2, 11). Full network-importance gainers/losers table: `data/processed/trade_network_pagerank_change.csv`.
+Genuinely complete 59-country bilateral network, betweenness/eigenvector centrality and PageRank computed via NetworkX, compared 2016 vs. 2023 (Visualisations 2, 11). Full network-importance gainers/losers table: `data/processed/trade_network_pagerank_change.csv`. UN Comtrade's free tier structurally excludes four of the 59 target countries entirely (United States, India, Belgium, Ethiopia); every edge touching any of the four is resolved from OECD's Bilateral Trade in Goods database instead, one clean source per edge, documented in full in `docs/DATA_QUALITY.md`. This changed the network's own headline finding: India, not the UAE, is the biggest network-importance gainer 2016-2023 once the network is actually complete.
 
 ## Logistics Intelligence
 
@@ -111,7 +111,7 @@ World Bank Logistics Performance Index (overall + 3 sub-components) and containe
 
 ## Supply Chain Risk
 
-Four-pillar transparent composite (import dependency, logistics fragility, trade-partner concentration, commodity-price exposure), equal-weighted, min-max normalised, with two documented sensitivity checks: the original single-alternative-weighting comparison (Spearman ρ=0.976 against a concentration-double-weighted alternative) and, added after external review, a fuller 1,000-draw weight-sensitivity Monte Carlo showing each country's rank range across random pillar weightings (Visualisation 18). Independently cross-checked, qualitatively, against two published external indices (DHL Global Connectedness Report 2026, Agility Emerging Markets Logistics Index 2026): see `docs/EXTERNAL_VALIDATION.md`. Full methodology: `docs/METHODOLOGY.md`.
+Four-pillar transparent composite (import dependency, logistics fragility, trade-partner concentration, commodity-price exposure), equal-weighted, min-max normalised, covering all 59 network countries, with two documented sensitivity checks: the original single-alternative-weighting comparison (Spearman ρ=0.986 against a concentration-double-weighted alternative) and, added after external review, a fuller 1,000-draw weight-sensitivity Monte Carlo showing each country's rank range across random pillar weightings (Visualisation 18). Independently cross-checked, qualitatively, against two published external indices (DHL Global Connectedness Report 2026, Agility Emerging Markets Logistics Index 2026): see `docs/EXTERNAL_VALIDATION.md`. Full methodology: `docs/METHODOLOGY.md`.
 
 ## Future Scenarios
 
@@ -133,25 +133,25 @@ Malaysia is a dedicated strategic case study, not an appendix: full framework in
 
 ## Key Strategic Insights
 
-### Insight 1: Network importance and raw trade volume diverge
+### Insight 1: Network importance and raw trade volume diverge, and this analysis only became trustworthy once it was actually complete
 
-**DATA:** Between 2016 and 2023, the UAE gained more structural network importance than any other economy in this dataset (+29% PageRank), followed by China, Poland, Turkiye, Saudi Arabia, and Vietnam; the UK, Hong Kong, Singapore, and Japan lost the most (-17% to -26%).
+**DATA:** Between 2016 and 2023, India gained more structural network importance than any other economy in this dataset (+44% PageRank), followed by the Netherlands, Belgium, Poland, the United States, and Mexico; the UK, Hong Kong SAR, and Japan lost the most (-17% to -24%), Iran lost the most of all (-43%). This is a genuinely different finding from an earlier version of this project, which (built on the 55 countries UN Comtrade's free tier actually returns) had reported the UAE as the biggest gainer, a finding that does not survive once the United States, India, Belgium, and Ethiopia are correctly included.
 
-**INSIGHT:** Ranking countries purely by trade volume or GDP misses this shift entirely; a country's position within the network, how many other well-connected countries it trades with, is a separate and, in the UAE's case, faster-moving signal than raw export value.
+**INSIGHT:** Ranking countries purely by trade volume or GDP misses this shift entirely, a country's position within the network is a separate signal than raw export value. But the deeper insight is methodological: a network-centrality finding built on an incomplete network, even one missing "only" 4 of 59 countries, can be actively wrong, not just imprecise, especially when the missing countries are among the most globally connected (the United States, in this case).
 
-**BUSINESS IMPLICATION:** A market-entry or supplier-diversification strategy built only on "biggest trading partners" lists would have missed the UAE's rise and the UK's, Hong Kong's, and Singapore's relative decline as real structural shifts, not noise.
+**BUSINESS IMPLICATION:** A market-entry or supplier-diversification strategy built on this project's own earlier, incomplete finding would have chased the wrong signal (the UAE) and missed the real one (India, the Netherlands, Belgium). The same risk applies to any third-party network analysis built on a data source with an undisclosed coverage gap.
 
-**STRATEGIC CONSIDERATION:** Businesses reassessing regional hubs (logistics, re-export, financial intermediation) should track network-centrality measures like PageRank alongside trade-volume rankings; the two can move in genuinely different directions inside the same seven-year window.
+**STRATEGIC CONSIDERATION:** Businesses reassessing regional hubs should track network-centrality measures like PageRank alongside trade-volume rankings, but should also demand to know exactly which countries a given network analysis does and does not cover before trusting its "who's rising" conclusions, a lesson this project learned about its own work, not just a generic caveat.
 
-### Insight 2: Malaysia's trade-partner concentration is rising, not falling
+### Insight 2: Malaysia's supplier concentration is rising sharply; its customer concentration is not, a real, mixed finding
 
-**DATA:** Malaysia's supplier HHI rose from 1,125 to 1,202 and customer HHI from 915 to 975 between 2016 and 2023 (both still in the "unconcentrated" range, but moving up, not down); China is Malaysia's largest supplier (27.2% of imports) and second-largest customer (17.4%).
+**DATA:** Malaysia's supplier HHI rose from 1,235 to 1,646 between 2016 and 2023 (crossing from "unconcentrated" toward the edge of "moderately concentrated"); customer HHI moved only slightly, from 914 to 880, essentially flat. China is Malaysia's largest supplier (34.1% of imports); on the customer side, Singapore (15.8%), the United States (15.6%), and China (13.9%) are now a close three-way race, not a clear China-second finding.
 
-**INSIGHT:** The "China+1 diversification" narrative common in trade commentary does not show up in Malaysia's own bilateral concentration trend; if anything, Malaysia's trade partners narrowed slightly over this period.
+**INSIGHT:** The "China+1 diversification" narrative does not show up on Malaysia's supplier side (concentration is rising, not falling), but the customer side genuinely does not support a strong directional claim either way, a real, mixed picture that a single "concentration is rising" headline would have overstated. This also directly required correcting an earlier version of this project's finding, which had reported China as Malaysia's clear second-largest customer; the United States being missing from that earlier analysis (a UN Comtrade free-tier gap, not a modelling choice) was enough to change that specific ranking.
 
-**BUSINESS IMPLICATION:** A business assuming Malaysia has been actively diversifying its trade base away from China, based on regional "China+1" headlines, would be relying on an assumption this project's own bilateral data does not support.
+**BUSINESS IMPLICATION:** A business assuming Malaysia has been actively diversifying its trade base away from China would be right on the customer side (roughly flat concentration, three real alternatives) but wrong on the supplier side (concentration is genuinely rising); a single blended "diversification score" would obscure this real asymmetry.
 
-**STRATEGIC CONSIDERATION:** Supply-chain risk assessments specific to Malaysia should treat rising, not falling, concentration as the current baseline, and monitor the trend directly with bilateral data rather than inferring it from regional narratives.
+**STRATEGIC CONSIDERATION:** Supply-chain risk assessments specific to Malaysia should track supplier and customer concentration as two separate trends, not one, and should specifically verify that a US-inclusive data source is being used, since this project's own experience shows that gap alone was enough to change a headline customer-ranking finding.
 
 ### Insight 3: A validated, boring forecast beat two more sophisticated ones
 
@@ -179,7 +179,7 @@ Full write-up: [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md). In brief: PPP-adjus
 
 ## Data Sources
 
-World Bank, UN Comtrade, USGS Mineral Commodity Summaries 2025, World Bank Commodity Markets (Pink Sheet), DOSM; full citations and three genuine data-quality discoveries (not assumptions) in [`docs/SOURCES.md`](docs/SOURCES.md).
+World Bank, UN Comtrade, OECD, USGS Mineral Commodity Summaries 2025, World Bank Commodity Markets (Pink Sheet), DOSM; full citations and four genuine data-quality discoveries (not assumptions) in [`docs/SOURCES.md`](docs/SOURCES.md).
 
 ## Notebooks
 
@@ -196,7 +196,7 @@ World Bank, UN Comtrade, USGS Mineral Commodity Summaries 2025, World Bank Commo
 
 ## Limitations
 
-Full document: [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) (16 items). Headline items: the United States and India are structurally absent from the free-tier bilateral trade data (verified directly, not assumed); the network covers 59 (practically 57) major economies, not the full ~200; AIS/shipping-route data was not used (commercial/restricted, substituted with container port traffic); Malaysia sub-national analysis was not built (no sufficiently granular free data found); the risk index's commodity-exposure pillar is deliberately the crudest of its four pillars, named as such. Added after external review: the risk index's external validation is qualitative, not a formal statistical benchmark; the forecast stress test uses documented simplifying pass-through assumptions, not a modelled economic transmission channel; only Nickel has a matching production-concentration figure and price series for Monte Carlo simulation; and the named companies in the Malaysia section are illustrative public examples, not a systematic dataset.
+Full document: [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) (17 items). Headline items: four of 59 target countries (United States, India, Belgium, Ethiopia) were structurally absent from the free-tier bilateral trade data, found and resolved via a second source, OECD's Bilateral Trade in Goods database (verified directly, not assumed; see `docs/DATA_QUALITY.md`); the network covers 59 major economies, not the full ~200; AIS/shipping-route data was not used (commercial/restricted, substituted with container port traffic); Malaysia sub-national analysis was not built (no sufficiently granular free data found); the risk index's commodity-exposure pillar is deliberately the crudest of its four pillars, named as such. Added after external review: the risk index's external validation is qualitative, not a formal statistical benchmark; the forecast stress test uses documented simplifying pass-through assumptions, not a modelled economic transmission channel; only Nickel has a matching production-concentration figure and price series for Monte Carlo simulation; the named companies in the Malaysia section are illustrative public examples, not a systematic dataset; and the four backfilled countries' edges use a different source pipeline with a documented mirror-statistic caveat.
 
 ## Glossary
 
@@ -223,9 +223,11 @@ pip install -r requirements.txt
 # 1. Collect raw data
 python python/data_collection/world_bank.py
 python python/data_collection/comtrade_network.py    # ~5-10 min, rate-limited to ~1 req/sec
+python python/data_collection/oecd_missing_reporters_trade.py    # USA/India/Belgium/Ethiopia backfill, no API key, ~16 calls
 
 # 2. Clean and build processed datasets
 python python/cleaning/build_master_panel.py
+python python/cleaning/merge_bilateral_trade.py    # merges the above two into the genuinely-complete 59-country network
 python python/cleaning/clean_critical_materials.py
 python python/cleaning/clean_commodity_prices.py
 python python/cleaning/clean_malaysia_trade.py
@@ -263,8 +265,8 @@ project-008-global-supply-chain-intelligence/
 │   └── external/         # Region mapping, country-code reference, boundaries
 ├── notebooks/            # 01-08, narrative walkthrough of the python/ pipeline
 ├── python/
-│   ├── data_collection/  # World Bank + UN Comtrade API clients
-│   ├── cleaning/          # Master panel, critical materials, commodity prices, Malaysia trade
+│   ├── data_collection/  # World Bank + UN Comtrade + OECD missing-reporter backfill
+│   ├── cleaning/          # Master panel, bilateral trade merge, critical materials, commodity prices, Malaysia trade
 │   ├── analysis/           # Risk index, Malaysia deep dive & vulnerability/opportunity
 │   ├── networks/            # Trade network centrality
 │   ├── forecasting/          # Malaysia export forecast + backtest + scenario stress test

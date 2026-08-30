@@ -22,7 +22,7 @@ countries = pd.read_csv("data/external/network_countries.csv")
 risk = pd.read_csv("data/processed/supply_chain_risk_index.csv")
 mat_summary = pd.read_csv("data/processed/critical_materials_concentration.csv")
 mat_by_country = pd.read_csv("data/processed/critical_materials_by_country.csv")
-comtrade = pd.read_csv("data/raw/comtrade_bilateral_trade_raw.csv")
+edges_resolved = pd.read_csv("data/processed/trade_network_edges_export.csv")  # all 59 countries, see merge_bilateral_trade.py
 network_centrality = pd.read_csv("data/processed/trade_network_centrality.csv")
 mys_headline = pd.read_csv("data/processed/malaysia_trade_headline_annual.csv")
 mys_forecast = pd.read_csv("data/processed/malaysia_export_forecast_2026_2030.csv")
@@ -83,11 +83,11 @@ save(fig, "01_global_trade_map")
 # Visualisation 11, python/networks/trade_network.py) is computed on, this
 # chart is illustrative, that one is the analysis.
 g_full = nx.DiGraph()
-sub = comtrade[(comtrade["period"].astype(str) == "2023") & (comtrade["flow"] == "X")]
+sub = edges_resolved[edges_resolved["period"].astype(str) == "2023"]
 code_to_name = dict(zip(countries["comtradeReporterCode"], countries["Country"]))
 code_to_region = dict(zip(countries["comtradeReporterCode"], countries["Project_007_Region"]))
 for _, row in sub.iterrows():
-    g_full.add_edge(int(row["reporterCode"]), int(row["partnerCode"]), weight=row["primaryValue"])
+    g_full.add_edge(int(row["exporterCode"]), int(row["importerCode"]), weight=row["primaryValue"])
 total_exports_full = {n: sum(w for _, _, w in g_full.out_edges(n, data="weight")) for n in g_full.nodes}
 top25 = sorted(g_full.nodes, key=lambda n: total_exports_full[n], reverse=True)[:25]
 g = g_full.subgraph(top25).copy()
@@ -112,7 +112,7 @@ for n in top12:
     ax.annotate(code_to_name.get(n, n), (x, y - dy - 0.03), fontsize=9, color=INK_SECONDARY, ha="center", va="top")
 ax.set_title("Top 25 economies by export volume: hubs are large economies, not necessarily central ones", loc="left")
 ax.set_axis_off()
-add_source(fig, "Source: UN Comtrade, 2023 total exports, PUBLIC. Restricted to the top 25 of 59 economies by export volume for legibility; full 59-country centrality analysis is Visualisation 11. Node size = total exports; labels = top 12.")
+add_source(fig, "Source: UN Comtrade + OECD BTiGE, 2023 total exports, PUBLIC/DERIVED (4 of 59 countries backfilled from OECD, see docs/DATA_QUALITY.md). Restricted to the top 25 of 59 economies by export volume for legibility; full 59-country centrality analysis is Visualisation 11. Node size = total exports; labels = top 12.")
 save(fig, "02_global_trade_network")
 
 # ---------------------------------------------------------------------------
@@ -155,7 +155,7 @@ fig, ax = plt.subplots(figsize=(8.5, 7))
 ax.barh(top15["Country"], top15["score_trade_concentration"], color=ACCENT_2)
 ax.set_title("Most export-concentrated economies in the network (highest HHI, most exposed to a single market)", loc="left", fontsize=11.5)
 ax.set_xlabel("Export-partner concentration score (0-100, min-max of HHI)")
-add_source(fig, "Source: UN Comtrade, 2023 export destinations within the 59-country network, PUBLIC.")
+add_source(fig, "Source: UN Comtrade + OECD BTiGE, 2023 export destinations within the genuinely-complete 59-country network, PUBLIC/DERIVED.")
 save(fig, "05_trade_concentration")
 
 # ---------------------------------------------------------------------------
@@ -258,7 +258,7 @@ for _, row in top_label.iterrows():
 ax.set_title("Network centrality: bridging role (x) vs. importance-by-association (y)", loc="left")
 ax.set_xlabel("Betweenness centrality (bridges between otherwise-unconnected trade relationships)")
 ax.set_ylabel("Eigenvector centrality (connected to other important economies)")
-add_source(fig, "Source: NetworkX on UN Comtrade 2023 bilateral exports, 59-country network, PUBLIC/DERIVED. Bubble size = total exports.")
+add_source(fig, "Source: NetworkX on UN Comtrade + OECD BTiGE 2023 bilateral exports, genuinely-complete 59-country network, PUBLIC/DERIVED. Bubble size = total exports.")
 save(fig, "11_network_centrality")
 
 # ---------------------------------------------------------------------------
@@ -316,7 +316,7 @@ c = mys_customers.sort_values("share_pct").tail(8)
 axes[1].barh(c["customer"], c["share_pct"], color=ACCENT_2)
 axes[1].set_title("Who buys from Malaysia (2023)", loc="left", fontsize=11)
 axes[1].set_xlabel("% of Malaysia's exports")
-add_source(fig, "Source: UN Comtrade, Malaysia bilateral trade within the 59-country network, PUBLIC.")
+add_source(fig, "Source: UN Comtrade + OECD BTiGE, Malaysia bilateral trade within the genuinely-complete 59-country network, PUBLIC/DERIVED.")
 save(fig, "15_malaysia_suppliers_customers")
 
 # ---------------------------------------------------------------------------
@@ -361,7 +361,7 @@ ax.scatter(subset18["base_rank"], subset18["Country"], color=[INK if not m else 
 ax.set_xlabel("Risk rank across 1,000 random pillar-weight draws (1 = highest risk)")
 ax.set_title("Supply Chain Risk Index: how much does the weighting choice matter?", loc="left", fontsize=11.5)
 ax.invert_xaxis()
-add_source(fig, "Source: this project's risk_index_weight_sensitivity.csv, DERIVED. Dot = base equal-weighted rank, bar = 5th-95th percentile rank across 1,000 random Dirichlet weight draws (48 countries with complete pillar data). Malaysia highlighted.")
+add_source(fig, f"Source: this project's risk_index_weight_sensitivity.csv, DERIVED. Dot = base equal-weighted rank, bar = 5th-95th percentile rank across 1,000 random Dirichlet weight draws ({len(risk_sensitivity)} countries with complete pillar data). Malaysia highlighted.")
 save(fig, "18_risk_index_weight_sensitivity")
 
 # ---------------------------------------------------------------------------

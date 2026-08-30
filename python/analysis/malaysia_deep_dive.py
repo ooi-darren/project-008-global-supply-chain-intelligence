@@ -3,8 +3,15 @@
 Malaysia supply-chain deep dive for Project 008.
 
 Combines:
-  - UN Comtrade bilateral data (Malaysia = reporter 458) for supplier/customer
-    concentration within the 59-country network
+  - The resolved bilateral trade network (data/processed/trade_network_edges_
+    export.csv, Malaysia = code 458) for supplier/customer concentration
+    within the now-complete 59-country network. Genuinely covers all 59 as
+    of the fix added after external review: Malaysia's own Comtrade data
+    never included the United States, India, Belgium, or Ethiopia as a
+    trading partner at all (Comtrade's free tier excludes those four
+    entirely, from every reporter's data, not just Malaysia's), so those
+    relationships come from OECD's own resolution instead -- see
+    python/cleaning/merge_bilateral_trade.py.
   - USGS critical materials data for Malaysia's position as tin/bauxite producer
   - World Bank LPI for Malaysia vs. ASEAN peers
   - DOSM BEC import data for production-input dependency
@@ -22,22 +29,30 @@ ASEAN_ISO3 = ["MYS", "SGP", "IDN", "THA", "PHL", "VNM"]
 
 
 def supplier_customer_concentration():
-    df = pd.read_csv(os.path.join(OUT_DIR, "..", "raw", "comtrade_bilateral_trade_raw.csv"))
+    # Resolved export edges (see python/cleaning/merge_bilateral_trade.py)
+    # directly answer both questions: "who supplies Malaysia" = edges where
+    # Malaysia is the IMPORTER (other countries' exports TO Malaysia); "who
+    # buys from Malaysia" = edges where Malaysia is the EXPORTER. Both
+    # directions are already fully resolved across all 59 countries, so no
+    # separate M/X-flow lookup is needed here.
+    df = pd.read_csv(os.path.join(OUT_DIR, "trade_network_edges_export.csv"))
     countries = pd.read_csv("data/external/network_countries.csv")
     code_to_name = dict(zip(countries["comtradeReporterCode"], countries["Country"]))
 
     results = {}
     for period in ["2016", "2023"]:
-        # Who supplies Malaysia (Malaysia's imports = M flow, reporter=458)
-        imp = df[(df["reporterCode"] == MYS_CODE) & (df["flow"] == "M") & (df["period"].astype(str) == str(period))].copy()
-        imp["supplier"] = imp["partnerCode"].map(code_to_name)
+        sub = df[df["period"].astype(str) == str(period)]
+
+        # Who supplies Malaysia (edges where Malaysia is the importer)
+        imp = sub[sub["importerCode"] == MYS_CODE].copy()
+        imp["supplier"] = imp["exporterCode"].map(code_to_name)
         imp["share_pct"] = imp["primaryValue"] / imp["primaryValue"].sum() * 100
         imp = imp.sort_values("share_pct", ascending=False)
         supplier_hhi = ((imp["share_pct"]) ** 2).sum()
 
-        # Who buys from Malaysia (Malaysia's exports = X flow)
-        exp = df[(df["reporterCode"] == MYS_CODE) & (df["flow"] == "X") & (df["period"].astype(str) == str(period))].copy()
-        exp["customer"] = exp["partnerCode"].map(code_to_name)
+        # Who buys from Malaysia (edges where Malaysia is the exporter)
+        exp = sub[sub["exporterCode"] == MYS_CODE].copy()
+        exp["customer"] = exp["importerCode"].map(code_to_name)
         exp["share_pct"] = exp["primaryValue"] / exp["primaryValue"].sum() * 100
         exp = exp.sort_values("share_pct", ascending=False)
         customer_hhi = ((exp["share_pct"]) ** 2).sum()

@@ -9,7 +9,7 @@ How Malaysia is treated as a dedicated strategic case study in this project (bri
 | National trade headline | DOSM `trade_headline` | Overall export/import/balance trend, 2001-2025 |
 | Trade composition | DOSM `trade_sitc_1d` | What Malaysia actually exports (SITC sections) |
 | Import composition by end use | DOSM `trade_enduse_bec` | How much of Malaysia's imports are production inputs (capital/intermediate goods) vs. final consumption |
-| Bilateral trade | UN Comtrade (reporter 458, part of the 57/59-country network) | Who supplies Malaysia; who buys from Malaysia; concentration (HHI) on both sides |
+| Bilateral trade | UN Comtrade + OECD BTiGE (reporter 458, part of the genuinely-complete 59-country network as of the fix added after external review; see `docs/DATA_QUALITY.md`) | Who supplies Malaysia; who buys from Malaysia; concentration (HHI) on both sides |
 | Logistics | World Bank LPI | Malaysia's position vs. ASEAN-6 peers |
 | Critical minerals | USGS MCS 2025 | Malaysia's (small) share of global mine production for tracked materials |
 

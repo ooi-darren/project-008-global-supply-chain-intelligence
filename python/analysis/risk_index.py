@@ -73,9 +73,14 @@ def minmax(s):
 
 def build_export_concentration():
     """HHI of each reporter's export destinations within the 59-country
-    network, most-recent period (2023)."""
-    df = pd.read_csv("data/raw/comtrade_bilateral_trade_raw.csv")
-    sub = df[(df["period"].astype(str) == "2023") & (df["flow"] == "X")]
+    network, most-recent period (2023). Reads the resolved export-edges
+    table (data/processed/trade_network_edges_export.csv), which covers all
+    59 network countries (added after external review closed the USA/India/
+    Belgium/Ethiopia gap -- see python/cleaning/merge_bilateral_trade.py),
+    not the raw UN-Comtrade-only file, which only ever covered 55."""
+    df = pd.read_csv("data/processed/trade_network_edges_export.csv")
+    sub = df[df["period"].astype(str) == "2023"].rename(
+        columns={"exporterCode": "reporterCode", "importerCode": "partnerCode"})
     rows = []
     for reporter, g in sub.groupby("reporterCode"):
         total = g["primaryValue"].sum()
