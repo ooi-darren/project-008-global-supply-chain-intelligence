@@ -2,7 +2,7 @@
 
 ### Trade Networks, Logistics, Critical Resources, Supply Risk & Future Scenarios
 
-<img src="./outputs/figures/02_global_trade_network.png" width="800" alt="The 59-economy global trade network, hubs are large economies but not necessarily central ones">
+<img src="./outputs/figures/02_global_trade_network.png" width="800" alt="Top 25 economies by export volume: hubs are large economies but not necessarily central ones, full 59-country centrality analysis in Visualisation 11">
 
 **Part of an [8-case-study portfolio](https://github.com/ooi-darren)**, the second global-scope project, and the first to combine trade flows, critical-materials supply, network science, and forecasting into one system.
 

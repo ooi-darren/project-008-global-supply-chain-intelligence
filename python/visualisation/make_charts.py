@@ -64,26 +64,55 @@ add_source(fig, "Source: World Bank, trade % of GDP, each country's own latest a
 save(fig, "01_global_trade_map")
 
 # ---------------------------------------------------------------------------
-# 02. Global supply-chain network (2023, top 59 economies)
+# 02. Global supply-chain network (2023, top 25 economies by export volume)
 # ---------------------------------------------------------------------------
-g = nx.DiGraph()
+# Fixed after external review, twice. Attempt 1 (log-transformed layout
+# weight + larger k) improved label legibility but did not fix the real
+# problem: countries with genuinely few export partners in this 59-country
+# network (Iraq: 20 of 58 possible, Macao: 23, vs. a typical country's 50+)
+# have almost no attractive pull relative to the graph's dense, high-value
+# hub cluster, so force-directed layout flings them to arbitrary extreme
+# positions regardless of weight scaling. That is a structural property of
+# spring_layout on a 75%-dense, degree-heterogeneous graph, not a tuning
+# parameter, no amount of k/weight adjustment fixes it.
+# Fixed properly: this illustrative node-link chart is restricted to the
+# top 25 economies by total export volume (a real, stated reduction, not a
+# hidden one), which are exactly the well-connected countries a force-directed
+# layout renders sensibly; the full, unrestricted 59-country network is what
+# the actual rigorous centrality analysis (betweenness/eigenvector/PageRank,
+# Visualisation 11, python/networks/trade_network.py) is computed on, this
+# chart is illustrative, that one is the analysis.
+g_full = nx.DiGraph()
 sub = comtrade[(comtrade["period"].astype(str) == "2023") & (comtrade["flow"] == "X")]
 code_to_name = dict(zip(countries["comtradeReporterCode"], countries["Country"]))
 code_to_region = dict(zip(countries["comtradeReporterCode"], countries["Project_007_Region"]))
 for _, row in sub.iterrows():
-    g.add_edge(int(row["reporterCode"]), int(row["partnerCode"]), weight=row["primaryValue"])
-pos = nx.spring_layout(g, seed=42, k=0.4, weight="weight")
-node_size = [sum(w for _, _, w in g.out_edges(n, data="weight")) / 3e8 + 20 for n in g.nodes]
+    g_full.add_edge(int(row["reporterCode"]), int(row["partnerCode"]), weight=row["primaryValue"])
+total_exports_full = {n: sum(w for _, _, w in g_full.out_edges(n, data="weight")) for n in g_full.nodes}
+top25 = sorted(g_full.nodes, key=lambda n: total_exports_full[n], reverse=True)[:25]
+g = g_full.subgraph(top25).copy()
+for u, v, d in g.edges(data=True):
+    d["layout_weight"] = np.log1p(d["weight"])
+pos = nx.kamada_kawai_layout(g, weight="layout_weight")
+node_size = [total_exports_full[n] / 3e8 + 20 for n in g.nodes]
 node_color = [REGION_COLORS.get(code_to_region.get(n), GRAY) for n in g.nodes]
-fig, ax = plt.subplots(figsize=(13, 10))
-nx.draw_networkx_edges(g, pos, ax=ax, alpha=0.06, edge_color=GRAY, arrows=False)
+fig, ax = plt.subplots(figsize=(12, 9.5))
+nx.draw_networkx_edges(g, pos, ax=ax, alpha=0.1, edge_color=GRAY, arrows=False)
 nx.draw_networkx_nodes(g, pos, ax=ax, node_size=node_size, node_color=node_color, alpha=0.85, linewidths=0.5, edgecolors="white")
-top12 = sorted(g.nodes, key=lambda n: sum(w for _, _, w in g.out_edges(n, data="weight")), reverse=True)[:12]
+top12 = sorted(g.nodes, key=lambda n: total_exports_full[n], reverse=True)[:12]
+# Simple label-collision avoidance: nudge a label vertically in small steps
+# if it would otherwise land on top of an already-placed one.
+placed = []
 for n in top12:
-    ax.annotate(code_to_name.get(n, n), pos[n], fontsize=8.5, color=INK_SECONDARY, ha="center", va="bottom")
-ax.set_title("The 59-economy global trade network: hubs are large economies, not necessarily central ones", loc="left")
+    x, y = pos[n]
+    dy = 0.0
+    while any(abs(x - px) < 0.22 and abs((y - dy) - py) < 0.09 for px, py in placed):
+        dy += 0.09
+    placed.append((x, y - dy))
+    ax.annotate(code_to_name.get(n, n), (x, y - dy - 0.03), fontsize=9, color=INK_SECONDARY, ha="center", va="top")
+ax.set_title("Top 25 economies by export volume: hubs are large economies, not necessarily central ones", loc="left")
 ax.set_axis_off()
-add_source(fig, "Source: UN Comtrade, 2023 total exports among 59 major economies, PUBLIC. Node size = total exports; labels = top 12 by export volume.")
+add_source(fig, "Source: UN Comtrade, 2023 total exports, PUBLIC. Restricted to the top 25 of 59 economies by export volume for legibility; full 59-country centrality analysis is Visualisation 11. Node size = total exports; labels = top 12.")
 save(fig, "02_global_trade_network")
 
 # ---------------------------------------------------------------------------
