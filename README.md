@@ -8,6 +8,10 @@
 
 > Understanding how the world moves, identifying where supply chains are vulnerable, and assessing where they may go next, with a Malaysia 2030+ deep dive.
 
+## Executive Summary
+
+This project builds a global supply-chain intelligence system from UN Comtrade, USGS, World Bank, and Malaysia's DOSM data to test where global trade structure has actually shifted since 2016, where raw-material supply is genuinely concentrated, and what that means for Malaysia specifically, rather than relying on headline narratives. A 57-country bilateral trade network (three independent double-counting dimensions in the UN Comtrade free tier identified and corrected; the United States and India are structurally absent from that same free tier, not from this project's pipeline) shows that network centrality and raw trade volume diverge sharply: the UAE gained more structural importance than any other economy between 2016 and 2023 (+29% PageRank), a real, data-driven signature of Gulf trade diversification, while the UK, Hong Kong, and Singapore lost the most (-21% to -26%). A 13-material critical-minerals concentration index, built from real 2023 USGS production data, finds four materials, Gallium (China, 98%), Tungsten (China, 84%), Graphite (China, 79%), and Cobalt (DR Congo, 76%), far above the standard highly-concentrated HHI threshold of 2,500, with Nickel (Indonesia, 60%) the clearest live case of concentration still rising. A transparent, sensitivity-tested four-pillar Supply Chain Risk Index (Spearman ρ=0.976 against an alternative weighting) ranks 59 economies; Malaysia sits mid-pack at 30th, with its own supplier and customer trade concentration rising, not falling, between 2016 and 2023, a finding that runs against the "China+1 diversification" narrative. A Malaysia export forecast to 2030, validated on a genuine five-year rolling backtest rather than a single train/test split, finds that the simplest model with a trend, naive-with-drift, beats both ARIMA and ETS on real out-of-sample accuracy, reported honestly rather than replaced with a more impressive-looking result, forecasting RM1.87 trillion by 2030 (90% band: RM1.53-2.21 trillion). A companion 10,000-path Monte Carlo simulation on nickel prices, the one critical material with both a real production-concentration figure and a matching price history, puts the 12-month probability of a greater-than-20% price move at 25-27% (increase) versus 13-17% (decrease).
+
 ## Research Question
 
 **How has the global supply-chain system changed over the past decade, what is happening now, where are the major dependencies and vulnerabilities, and what could happen over the next 5-10 years under different scenarios? And what do these changes mean for Malaysia specifically?**
@@ -42,9 +46,39 @@ Three things this project found that matter for everyone, not just economists:
 
 This project also makes a forecast about Malaysia's exports out to 2030, and honestly reports that the simplest possible forecasting method (just "keep growing at the recent average rate") beat two much fancier statistical models when tested properly, which is itself a useful, honest finding. (New to terms like "HHI," "PageRank," or "Monte Carlo"? See the Glossary near the bottom.)
 
-## Why This Matters
+## Why This Research Matters
 
 Businesses and policymakers routinely make claims about supply-chain "resilience," "diversification," or "critical dependency" without the underlying network, concentration, or forecast evidence to back them up. This project builds that evidence base directly from real trade, materials, and logistics data, with every claim traced to its source and every limitation stated plainly, the same standard as every other case study in this portfolio.
+
+## Global Research Coverage
+
+- **59 major economies** targeted for the bilateral trade network; **57 effective** for bilateral edges specifically (the United States and India are structurally absent from UN Comtrade's free tier as both reporter and partner, verified directly, not assumed; see `docs/LIMITATIONS.md`)
+- **2 network years** (2016, 2023) × 2 trade flows, **236 API calls**, **10,911 bilateral trade rows** kept after identifying and correcting three independent double-counting dimensions in the raw API response (transport mode, re-export/transit country, customs regime)
+- **13 critical materials**, each selected against 4 documented selection criteria, concentration (HHI/CR3/CR5) computed from real 2023 country-level production data (USGS Mineral Commodity Summaries 2025, 184 country-material rows)
+- **17 World Bank indicators** (trade openness, logistics, GDP, demographics) across **2013-2025**, a 2,821-row country-year panel
+- **14 priority commodities**, monthly nominal prices since the 1960s (11,066 rows), current through July 2026 (World Bank Commodity Markets "Pink Sheet")
+- **5 Malaysia-specific DOSM datasets** (trade headline 2001-2025, 275-row SITC detail, BEC end-use production-input breakdown) plus dedicated UN Comtrade bilateral pulls (reporter code 458)
+- **5 independent public data sources** in total, none behind a paywall or requiring a registered API key; full citations and licence terms in `docs/SOURCES.md`
+
+## Research Framework
+
+```
+Data Acquisition (UN Comtrade, World Bank, USGS, Pink Sheet, DOSM)
+        │
+Data Engineering (triple-double-counting fixes, region mapping, master panel, critical-materials table)
+        │
+Network Analysis (directed export graph, betweenness/eigenvector/PageRank, 2016 vs 2023)
+        │
+Concentration Analysis (critical-materials HHI/CR3/CR5, trade-partner HHI)
+        │
+Supply Chain Risk Index (4-pillar transparent composite, sensitivity-tested)
+        │
+Forecasting & Simulation (5-year rolling backtest, Monte Carlo historical bootstrap)
+        │
+Malaysia Deep Dive (vulnerability index, evidence-graded opportunity radar)
+        │
+Strategic Translation (DATA → INSIGHT → BUSINESS IMPLICATION → STRATEGIC CONSIDERATION)
+```
 
 ## Global Supply Chain: What Changed Since 2016, What's Happening Now
 
@@ -92,9 +126,45 @@ Malaysia is a dedicated strategic case study, not an appendix: full framework in
 
 ## Key Strategic Insights
 
-1. **Network importance and raw trade volume diverge**: a market-entry or partnership strategy built purely on "biggest trading partners" will miss real structural shifts (the UAE's rising centrality, Hong Kong's falling centrality) that PageRank-style analysis catches and simple export-value ranking does not.
-2. **Malaysia's rising (not falling) trade concentration is worth watching, not assuming away**: the "diversification" story implied by China+1 headlines does not show up in Malaysia's own supplier/customer HHI trend over 2016-2023.
-3. **A validated, boring forecast beats an exciting, unvalidated one**; this project's own backtest discipline is itself a transferable lesson for any business forecasting exercise: test before trusting a more sophisticated model.
+### Insight 1: Network importance and raw trade volume diverge
+
+**DATA:** Between 2016 and 2023, the UAE gained more structural network importance than any other economy in this dataset (+29% PageRank), followed by China, Poland, Turkiye, Saudi Arabia, and Vietnam; the UK, Hong Kong, Singapore, and Japan lost the most (-17% to -26%).
+
+**INSIGHT:** Ranking countries purely by trade volume or GDP misses this shift entirely; a country's position within the network, how many other well-connected countries it trades with, is a separate and, in the UAE's case, faster-moving signal than raw export value.
+
+**BUSINESS IMPLICATION:** A market-entry or supplier-diversification strategy built only on "biggest trading partners" lists would have missed the UAE's rise and the UK's, Hong Kong's, and Singapore's relative decline as real structural shifts, not noise.
+
+**STRATEGIC CONSIDERATION:** Businesses reassessing regional hubs (logistics, re-export, financial intermediation) should track network-centrality measures like PageRank alongside trade-volume rankings; the two can move in genuinely different directions inside the same seven-year window.
+
+### Insight 2: Malaysia's trade-partner concentration is rising, not falling
+
+**DATA:** Malaysia's supplier HHI rose from 1,125 to 1,202 and customer HHI from 915 to 975 between 2016 and 2023 (both still in the "unconcentrated" range, but moving up, not down); China is Malaysia's largest supplier (27.2% of imports) and second-largest customer (17.4%).
+
+**INSIGHT:** The "China+1 diversification" narrative common in trade commentary does not show up in Malaysia's own bilateral concentration trend; if anything, Malaysia's trade partners narrowed slightly over this period.
+
+**BUSINESS IMPLICATION:** A business assuming Malaysia has been actively diversifying its trade base away from China, based on regional "China+1" headlines, would be relying on an assumption this project's own bilateral data does not support.
+
+**STRATEGIC CONSIDERATION:** Supply-chain risk assessments specific to Malaysia should treat rising, not falling, concentration as the current baseline, and monitor the trend directly with bilateral data rather than inferring it from regional narratives.
+
+### Insight 3: A validated, boring forecast beat two more sophisticated ones
+
+**DATA:** Four forecasting models for Malaysia's exports (naive, naive-with-drift, ETS, ARIMA) were compared on a genuine five-year rolling-origin backtest; naive-with-drift, the simplest model with a trend, produced the lowest out-of-sample RMSE, beating both ARIMA and ETS.
+
+**INSIGHT:** Model sophistication did not translate into forecast accuracy on this series; the finding is reported as-is rather than replaced with a more impressive-looking model, per this project's own research-integrity standard.
+
+**BUSINESS IMPLICATION:** A forecasting exercise that skips backtesting and defaults to the most sophisticated available model (ARIMA, in this case) would have produced a *worse* Malaysia export forecast than the simplest reasonable baseline.
+
+**STRATEGIC CONSIDERATION:** Any forecasting process feeding into planning or capital-allocation decisions should include a real rolling-origin backtest before a model is trusted, regardless of how established or sophisticated that model is assumed to be.
+
+### Insight 4: Four materials sit far above any reasonable concentration threshold
+
+**DATA:** Gallium (China, 98% of world mine production), Tungsten (China, 84%), Graphite (China, 79%), and Cobalt (DR Congo, 76%) are all far above the standard HHI=2,500 "highly concentrated" threshold; Nickel (Indonesia, 60% and rising) is the clearest live case of concentration still building.
+
+**INSIGHT:** This is not a diffuse, minor-supplier-risk-somewhere pattern; a handful of single-country dependencies sit behind materials central to semiconductors, EV batteries, and specialty steel, and the concentration is measurable and current, not historical.
+
+**BUSINESS IMPLICATION:** A business with exposure to electronics, EV, or specialty-steel supply chains should treat gallium, tungsten, graphite, and cobalt as genuinely single-point-of-failure materials, not merely "somewhat concentrated" ones, until diversified supply is independently verified.
+
+**STRATEGIC CONSIDERATION:** Procurement and supply-chain-risk functions tracking critical-materials exposure should monitor concentration directly (HHI/CR3, recomputed as new production data is released) rather than relying on a static list of "critical minerals," since concentration itself is shifting, as Nickel currently demonstrates.
 
 ## Methodology
 
