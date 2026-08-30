@@ -316,7 +316,7 @@ c = mys_customers.sort_values("share_pct").tail(8)
 axes[1].barh(c["customer"], c["share_pct"], color=ACCENT_2)
 axes[1].set_title("Who buys from Malaysia (2023)", loc="left", fontsize=11)
 axes[1].set_xlabel("% of Malaysia's exports")
-add_source(fig, "Source: UN Comtrade + OECD BTiGE, Malaysia bilateral trade within the genuinely-complete 59-country network, PUBLIC/DERIVED.")
+add_source(fig, "Source: UN Comtrade + OECD BTiGE, Malaysia bilateral trade within the genuinely-complete 59-country network, PUBLIC/DERIVED. Note: the US figure is a mirror statistic with a measured ~14-17% uncertainty band (docs/LIMITATIONS.md item 17), wide enough that the US-vs-Singapore #1 customer ranking is not settled by this data.")
 save(fig, "15_malaysia_suppliers_customers")
 
 # ---------------------------------------------------------------------------

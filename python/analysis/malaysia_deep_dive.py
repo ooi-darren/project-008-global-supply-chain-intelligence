@@ -5,13 +5,24 @@ Malaysia supply-chain deep dive for Project 008.
 Combines:
   - The resolved bilateral trade network (data/processed/trade_network_edges_
     export.csv, Malaysia = code 458) for supplier/customer concentration
-    within the now-complete 59-country network. Genuinely covers all 59 as
-    of the fix added after external review: Malaysia's own Comtrade data
-    never included the United States, India, Belgium, or Ethiopia as a
-    trading partner at all (Comtrade's free tier excludes those four
-    entirely, from every reporter's data, not just Malaysia's), so those
-    relationships come from OECD's own resolution instead -- see
-    python/cleaning/merge_bilateral_trade.py.
+    within the now-complete 59-country network. Genuinely covers all 59:
+    Malaysia's own Comtrade data never included the United States, India,
+    Belgium, or Ethiopia as a trading partner at all (Comtrade's free tier
+    excludes those four entirely, from every reporter's data, not just
+    Malaysia's), so those relationships come from OECD's own resolution
+    instead -- see python/cleaning/merge_bilateral_trade.py.
+
+    IMPORTANT for interpreting Malaysia's customer figures specifically:
+    Malaysia's export-to-US edge is a MIRROR_IMPORT_OECD edge (the US's own
+    import report, not Malaysia's own export report, which does not exist
+    in this project's data). python/analysis/validate_mirror_statistics.py
+    measured this exact kind of edge's typical discrepancy at trade flows
+    this size (~14-17% for >=$10B relationships), which is wide enough that
+    the reported figure (US 15.6%, Singapore 15.8%, China 13.9%) should NOT
+    be read as a precise ranking; Malaysia's #1-vs-#2 customer between the
+    US and Singapore is genuinely undetermined by this project's data, and
+    any report or chart built from this output should say so rather than
+    presenting the three percentages as settled. See LIMITATIONS.md item 17.
   - USGS critical materials data for Malaysia's position as tin/bauxite producer
   - World Bank LPI for Malaysia vs. ASEAN peers
   - DOSM BEC import data for production-input dependency

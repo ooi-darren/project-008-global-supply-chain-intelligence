@@ -47,6 +47,10 @@ The two files above concatenated, with a `source` column (`UN_COMTRADE` or `OECD
 
 The file most downstream scripts (`trade_network.py`, `risk_index.py`, `malaysia_deep_dive.py`, chart 02) actually read for bilateral trade. One row per (period, exporterCode, importerCode): the single best-available source for that directed export edge, resolved by the three-rule logic in `python/cleaning/merge_bilateral_trade.py`'s docstring, tagged in `edge_source` (`DIRECT_EXPORT_COMTRADE`, `DIRECT_EXPORT_OECD`, or `MIRROR_IMPORT_OECD`, the last used only where no direct export report exists anywhere in this project's data). No duplicate (period, exporter, importer) rows by construction (the merge script raises an error if any are found).
 
+## `data/processed/mirror_statistic_validation.csv`
+
+Quantifies exactly how much a `MIRROR_IMPORT_OECD` edge (above) can differ from a direct export report of the same physical flow, using the 24 (country-pair, period) combinations where OECD provides both for the four backfilled countries. One row per pair: `export_report_usd`, `mirror_import_report_usd`, `discrepancy_pct`. Discrepancy is strongly size-dependent (see `python/analysis/validate_mirror_statistics.py`): median 14.4% for relationships ≥$10B (comparable in scale to Malaysia-US trade), much noisier below that. Used to soften the Malaysia customer-ranking claim in the README; see `LIMITATIONS.md` item 17.
+
 ## `data/processed/critical_materials_by_country.csv` / `critical_materials_concentration.csv` (USGS)
 
 | Column | Notes |
