@@ -1,0 +1,103 @@
+# -*- coding: utf-8 -*-
+"""
+Malaysia supply-chain deep dive for Project 008.
+
+Combines:
+  - UN Comtrade bilateral data (Malaysia = reporter 458) for supplier/customer
+    concentration within the 59-country network
+  - USGS critical materials data for Malaysia's position as tin/bauxite producer
+  - World Bank LPI for Malaysia vs. ASEAN peers
+  - DOSM BEC import data for production-input dependency
+
+Outputs the Malaysia Supply Chain Vulnerability Index components (Section 21
+of the brief) and the ASEAN logistics comparison (Section 18).
+"""
+import pandas as pd
+import numpy as np
+import os
+
+OUT_DIR = "data/processed"
+MYS_CODE = 458
+ASEAN_ISO3 = ["MYS", "SGP", "IDN", "THA", "PHL", "VNM"]
+
+
+def supplier_customer_concentration():
+    df = pd.read_csv(os.path.join(OUT_DIR, "..", "raw", "comtrade_bilateral_trade_raw.csv"))
+    countries = pd.read_csv("data/external/network_countries.csv")
+    code_to_name = dict(zip(countries["comtradeReporterCode"], countries["Country"]))
+
+    results = {}
+    for period in ["2016", "2023"]:
+        # Who supplies Malaysia (Malaysia's imports = M flow, reporter=458)
+        imp = df[(df["reporterCode"] == MYS_CODE) & (df["flow"] == "M") & (df["period"].astype(str) == str(period))].copy()
+        imp["supplier"] = imp["partnerCode"].map(code_to_name)
+        imp["share_pct"] = imp["primaryValue"] / imp["primaryValue"].sum() * 100
+        imp = imp.sort_values("share_pct", ascending=False)
+        supplier_hhi = ((imp["share_pct"]) ** 2).sum()
+
+        # Who buys from Malaysia (Malaysia's exports = X flow)
+        exp = df[(df["reporterCode"] == MYS_CODE) & (df["flow"] == "X") & (df["period"].astype(str) == str(period))].copy()
+        exp["customer"] = exp["partnerCode"].map(code_to_name)
+        exp["share_pct"] = exp["primaryValue"] / exp["primaryValue"].sum() * 100
+        exp = exp.sort_values("share_pct", ascending=False)
+        customer_hhi = ((exp["share_pct"]) ** 2).sum()
+
+        results[period] = {
+            "top_suppliers": imp[["supplier", "primaryValue", "share_pct"]].head(10),
+            "top_customers": exp[["customer", "primaryValue", "share_pct"]].head(10),
+            "supplier_HHI": supplier_hhi, "customer_HHI": customer_hhi,
+            "n_suppliers": len(imp), "n_customers": len(exp),
+        }
+
+    for period in ["2016", "2023"]:
+        results[period]["top_suppliers"].to_csv(
+            os.path.join(OUT_DIR, f"malaysia_top_suppliers_{period}.csv"), index=False)
+        results[period]["top_customers"].to_csv(
+            os.path.join(OUT_DIR, f"malaysia_top_customers_{period}.csv"), index=False)
+
+    summary = pd.DataFrame([
+        {"period": p, "supplier_HHI": results[p]["supplier_HHI"], "customer_HHI": results[p]["customer_HHI"],
+         "n_suppliers": results[p]["n_suppliers"], "n_customers": results[p]["n_customers"]}
+        for p in ["2016", "2023"]
+    ])
+    summary.to_csv(os.path.join(OUT_DIR, "malaysia_trade_concentration_summary.csv"), index=False)
+    print("Malaysia trade concentration:")
+    print(summary.to_string(index=False))
+    print("\nTop 5 suppliers 2023:")
+    print(results["2023"]["top_suppliers"].head(5).to_string(index=False))
+    print("\nTop 5 customers 2023:")
+    print(results["2023"]["top_customers"].head(5).to_string(index=False))
+    return results
+
+
+def asean_logistics_comparison():
+    # Use latest_lpi_snapshot.csv (each country's own latest year WITH a
+    # non-null LPI score, since LPI is only published periodically -- not
+    # master_supply_chain_panel's naive "latest row per country", which
+    # picks up 2025 trade-only rows with no LPI at all for every ASEAN
+    # country and silently returns an all-NaN table).
+    latest = pd.read_csv(os.path.join(OUT_DIR, "latest_lpi_snapshot.csv"))
+    asean = latest[latest["ISO3"].isin(ASEAN_ISO3)][
+        ["ISO3", "Country", "Year", "logistics_performance_index_overall",
+         "logistics_performance_index_customs", "logistics_performance_index_infrastructure",
+         "logistics_performance_index_timeliness", "trade_pct_of_gdp"]
+    ].sort_values("logistics_performance_index_overall", ascending=False)
+    asean.to_csv(os.path.join(OUT_DIR, "malaysia_asean_logistics_comparison.csv"), index=False)
+    print("\nASEAN-6 logistics comparison (each country's own latest year):")
+    print(asean.to_string(index=False))
+    return asean
+
+
+def malaysia_critical_minerals_position():
+    mat = pd.read_csv(os.path.join(OUT_DIR, "critical_materials_by_country.csv"))
+    mys = mat[mat["country"].str.contains("Malaysia", case=False, na=False)]
+    mys.to_csv(os.path.join(OUT_DIR, "malaysia_critical_minerals_position.csv"), index=False)
+    print("\nMalaysia's position in critical-minerals production (2023):")
+    print(mys.to_string(index=False) if len(mys) else "(Malaysia not a top-15+ producer for any tracked material)")
+    return mys
+
+
+if __name__ == "__main__":
+    supplier_customer_concentration()
+    asean_logistics_comparison()
+    malaysia_critical_minerals_position()

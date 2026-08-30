@@ -1,0 +1,18 @@
+NE.TRD.GNFS.ZS (trade_pct_of_gdp): 3380 rows, 260 countries -> data\raw\worldbank\trade_pct_of_gdp.csv
+TX.VAL.MRCH.CD.WT (merchandise_exports_current_usd): 3380 rows, 260 countries -> data\raw\worldbank\merchandise_exports_current_usd.csv
+TM.VAL.MRCH.CD.WT (merchandise_imports_current_usd): 3380 rows, 260 countries -> data\raw\worldbank\merchandise_imports_current_usd.csv
+TX.VAL.MRCH.XD.WD (merchandise_export_price_index): 3380 rows, 260 countries -> data\raw\worldbank\merchandise_export_price_index.csv
+TX.VAL.TECH.MF.ZS (high_tech_exports_pct_of_manuf_exports): 3380 rows, 260 countries -> data\raw\worldbank\high_tech_exports_pct_of_manuf_exports.csv
+LP.LPI.OVRL.XQ (logistics_performance_index_overall): 3380 rows, 260 countries -> data\raw\worldbank\logistics_performance_index_overall.csv
+LP.LPI.CUST.XQ (logistics_performance_index_customs): 3380 rows, 260 countries -> data\raw\worldbank\logistics_performance_index_customs.csv
+LP.LPI.INFR.XQ (logistics_performance_index_infrastructure): 3380 rows, 260 countries -> data\raw\worldbank\logistics_performance_index_infrastructure.csv
+LP.LPI.TIME.XQ (logistics_performance_index_timeliness): 3380 rows, 260 countries -> data\raw\worldbank\logistics_performance_index_timeliness.csv
+IS.SHP.GOOD.TU (container_port_traffic_teu): 3380 rows, 260 countries -> data\raw\worldbank\container_port_traffic_teu.csv
+IS.AIR.GOOD.MT.K1 (air_freight_million_ton_km): 3380 rows, 260 countries -> data\raw\worldbank\air_freight_million_ton_km.csv
+IS.RRS.GOOD.MT.K6 (rail_freight_million_ton_km): 3380 rows, 260 countries -> data\raw\worldbank\rail_freight_million_ton_km.csv
+NY.GDP.MKTP.CD (gdp_current_usd): 3380 rows, 260 countries -> data\raw\worldbank\gdp_current_usd.csv
+NY.GDP.MKTP.KD.ZG (gdp_growth_annual_pct): 3380 rows, 260 countries -> data\raw\worldbank\gdp_growth_annual_pct.csv
+NY.GDP.PCAP.PP.CD (gdp_per_capita_ppp_current_intl): 3380 rows, 260 countries -> data\raw\worldbank\gdp_per_capita_ppp_current_intl.csv
+FP.CPI.TOTL.ZG (inflation_cpi_annual_pct): 3380 rows, 260 countries -> data\raw\worldbank\inflation_cpi_annual_pct.csv
+PA.NUS.FCRF (official_exchange_rate_lcu_per_usd): 3380 rows, 260 countries -> data\raw\worldbank\official_exchange_rate_lcu_per_usd.csv
+Combined panel: (3380, 20)

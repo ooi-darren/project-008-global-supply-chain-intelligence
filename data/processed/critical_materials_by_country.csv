@@ -1,0 +1,185 @@
+material,country,production_2023,share_pct
+Copper,United States,1130.0,5.78
+Copper,Australia,778.0,3.98
+Copper,Canada,500.0,2.56
+Copper,Chile,5250.0,26.87
+Copper,China,1820.0,9.32
+Copper,Congo (Kinshasa),2930.0,15.0
+Copper,India,27.0,0.14
+Copper,Indonesia,907.0,4.64
+Copper,Kazakhstan,740.0,3.79
+Copper,Mexico,699.0,3.58
+Copper,Peru,2760.0,14.13
+Copper,Poland,395.0,2.02
+Copper,Russia,890.0,4.56
+Copper,Zambia,712.0,3.64
+Copper (refined),United States,882.0,3.6
+Copper (refined),Australia,442.0,1.8
+Copper (refined),Canada,315.0,1.29
+Copper (refined),Chile,2080.0,8.49
+Copper (refined),China,12000.0,48.96
+Copper (refined),Congo (Kinshasa),2170.0,8.85
+Copper (refined),Germany,609.0,2.48
+Copper (refined),India,509.0,2.08
+Copper (refined),Indonesia,225.0,0.92
+Copper (refined),Japan,1490.0,6.08
+Copper (refined),Kazakhstan,458.0,1.87
+Copper (refined),"Korea, Republic of",604.0,2.46
+Copper (refined),Mexico,509.0,2.08
+Copper (refined),Peru,403.0,1.64
+Copper (refined),Poland,592.0,2.42
+Copper (refined),Russia,1000.0,4.08
+Copper (refined),Zambia,222.0,0.91
+Lithium,Argentina,8630.0,4.23
+Lithium,Australia,91700.0,44.97
+Lithium,Brazil,5260.0,2.58
+Lithium,Canada,3240.0,1.59
+Lithium,Chile,41400.0,20.3
+Lithium,China,35700.0,17.51
+Lithium,Namibia,2700.0,1.32
+Lithium,Portugal,380.0,0.19
+Lithium,Zimbabwe,14900.0,7.31
+Cobalt,Australia,5220.0,2.26
+Cobalt,Canada,4220.0,1.82
+Cobalt,Congo (Kinshasa),175000.0,75.63
+Cobalt,Cuba,3300.0,1.43
+Cobalt,Indonesia,19000.0,8.21
+Cobalt,Madagascar,4000.0,1.73
+Cobalt,New Caledonia,2570.0,1.11
+Cobalt,Papua New Guinea,3070.0,1.33
+Cobalt,Philippines,3800.0,1.64
+Cobalt,Russia,8700.0,3.76
+Cobalt,Turkey,2500.0,1.08
+Nickel,United States,16400.0,0.48
+Nickel,Australia,149000.0,4.37
+Nickel,Brazil,82700.0,2.43
+Nickel,Canada,159000.0,4.67
+Nickel,China,117000.0,3.43
+Nickel,Indonesia,2030000.0,59.56
+Nickel,New Caledonia,231000.0,6.78
+Nickel,Philippines,413000.0,12.12
+Nickel,Russia,210000.0,6.16
+Graphite,Austria,500.0,0.03
+Graphite,Brazil,66300.0,4.33
+Graphite,Canada,5470.0,0.36
+Graphite,China,1210000.0,78.94
+Graphite,Germany,180.0,0.01
+Graphite,India,25600.0,1.67
+Graphite,"Korea, North",8100.0,0.53
+Graphite,"Korea, Republic of",9620.0,0.63
+Graphite,Madagascar,63000.0,4.11
+Graphite,Mexico,1300.0,0.08
+Graphite,Mozambique,98000.0,6.39
+Graphite,Norway,6480.0,0.42
+Graphite,Russia,15000.0,0.98
+Graphite,Sri Lanka,3000.0,0.2
+Graphite,Tanzania,13200.0,0.86
+Graphite,Turkey,2800.0,0.18
+Graphite,Ukraine,1670.0,0.11
+Graphite,Vietnam,2500.0,0.16
+Rare earths,United States,41600.0,11.1
+Rare earths,Australia,16000.0,4.27
+Rare earths,Brazil,140.0,0.04
+Rare earths,Burma,43000.0,11.48
+Rare earths,China,255000.0,68.06
+Rare earths,India,2900.0,0.77
+Rare earths,Madagascar,2100.0,0.56
+Rare earths,Malaysia,310.0,0.08
+Rare earths,Nigeria,7200.0,1.92
+Rare earths,Russia,2500.0,0.67
+Rare earths,Thailand,3600.0,0.96
+Rare earths,Vietnam,300.0,0.08
+Tin,Australia,9850.0,3.25
+Tin,Bolivia,18700.0,6.16
+Tin,Brazil,29300.0,9.66
+Tin,Burma,34000.0,11.21
+Tin,China,70000.0,23.07
+Tin,Congo (Kinshasa),20000.0,6.59
+Tin,Indonesia,69000.0,22.74
+Tin,Laos,1700.0,0.56
+Tin,Malaysia,3770.0,1.24
+Tin,Nigeria,7000.0,2.31
+Tin,Peru,26200.0,8.63
+Tin,Russia,2700.0,0.89
+Tin,Rwanda,3600.0,1.19
+Tin,Vietnam,7600.0,2.5
+Bauxite,Australia,104000.0,24.01
+Bauxite,Brazil,32000.0,7.39
+Bauxite,China,91000.0,21.01
+Bauxite,Greece,1200.0,0.28
+Bauxite,Guinea,123000.0,28.39
+Bauxite,India,23400.0,5.4
+Bauxite,Indonesia,30000.0,6.92
+Bauxite,Jamaica,6000.0,1.38
+Bauxite,Kazakhstan,4560.0,1.05
+Bauxite,Russia,5800.0,1.34
+Bauxite,Saudi Arabia,5400.0,1.25
+Bauxite,Turkey,2940.0,0.68
+Bauxite,Vietnam,3920.0,0.9
+Aluminum (refined),United States,850.0,0.61
+Aluminum (refined),Australia,18800.0,13.5
+Aluminum (refined),Brazil,11000.0,7.9
+Aluminum (refined),Canada,1500.0,1.08
+Aluminum (refined),China,82400.0,59.19
+Aluminum (refined),Germany,900.0,0.65
+Aluminum (refined),Greece,869.0,0.62
+Aluminum (refined),Guinea,273.0,0.2
+Aluminum (refined),India,7500.0,5.39
+Aluminum (refined),Indonesia,1200.0,0.86
+Aluminum (refined),Ireland,1380.0,0.99
+Aluminum (refined),Jamaica,1400.0,1.01
+Aluminum (refined),Kazakhstan,1300.0,0.93
+Aluminum (refined),Russia,3020.0,2.17
+Aluminum (refined),Saudi Arabia,1830.0,1.31
+Aluminum (refined),Spain,716.0,0.51
+Aluminum (refined),Turkey,300.0,0.22
+Aluminum (refined),United Arab Emirates,2480.0,1.78
+Aluminum (refined),Vietnam,1490.0,1.07
+Manganese,Australia,2860.0,15.61
+Manganese,Brazil,580.0,3.16
+Manganese,China,767.0,4.19
+Manganese,CÃ´te dâIvoire,357.0,1.95
+Manganese,Gabon,4490.0,24.5
+Manganese,Ghana,818.0,4.46
+Manganese,India,744.0,4.06
+Manganese,Malaysia,410.0,2.24
+Manganese,South Africa,7300.0,39.83
+Tungsten,Australia,430.0,0.55
+Tungsten,Austria,850.0,1.09
+Tungsten,Bolivia,1500.0,1.92
+Tungsten,China,66000.0,84.42
+Tungsten,"Korea, North",1600.0,2.05
+Tungsten,Portugal,450.0,0.58
+Tungsten,Russia,2000.0,2.56
+Tungsten,Rwanda,1200.0,1.53
+Tungsten,Spain,650.0,0.83
+Tungsten,Vietnam,3500.0,4.48
+Gallium,China,621000.0,98.1
+Gallium,Japan,3000.0,0.47
+Gallium,"Korea, Republic of",3000.0,0.47
+Gallium,Russia,6000.0,0.95
+Silicon,Bhutan,82.0,1.62
+Silicon,Brazil,190.0,3.75
+Silicon,Canada,23.0,0.45
+Silicon,China,3640.0,71.78
+Silicon,France,23.0,0.45
+Silicon,Iceland,73.0,1.44
+Silicon,India,59.0,1.16
+Silicon,Kazakhstan,127.0,2.5
+Silicon,Malaysia,91.0,1.79
+Silicon,Norway,176.0,3.47
+Silicon,Poland,33.0,0.65
+Silicon,Russia,473.0,9.33
+Silicon,South Africa,37.0,0.73
+Silicon,Spain,44.0,0.87
+Titanium Mineral Concentrates,United States,100.0,1.18
+Titanium Mineral Concentrates,Australia,400.0,4.72
+Titanium Mineral Concentrates,Canada,350.0,4.13
+Titanium Mineral Concentrates,China,3250.0,38.33
+Titanium Mineral Concentrates,India,210.0,2.48
+Titanium Mineral Concentrates,Madagascar,300.0,3.54
+Titanium Mineral Concentrates,Mozambique,1860.0,21.93
+Titanium Mineral Concentrates,Norway,360.0,4.25
+Titanium Mineral Concentrates,Senegal,260.0,3.07
+Titanium Mineral Concentrates,South Africa,1260.0,14.86
+Titanium Mineral Concentrates,Ukraine,130.0,1.53
