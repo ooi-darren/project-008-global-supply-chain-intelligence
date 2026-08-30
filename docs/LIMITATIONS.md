@@ -46,7 +46,7 @@ Commodity prices are kept nominal-USD (not inflation-deflated) deliberately, sin
 
 ## 11. External Validation of the Risk Index Is Qualitative, Not a Formal Benchmark
 
-`docs/EXTERNAL_VALIDATION.md` (added after external review) cross-checks Malaysia's placement against two independently published indices (DHL Global Connectedness Report 2026, Agility Emerging Markets Logistics Index 2025) and finds it directionally consistent, not contradictory. This is a qualitative triangulation check, not a formal quantitative benchmark: those indices' full underlying country-level data is commercial/licensed or not structured for a direct pillar-by-pillar comparison against this project's own four pillars, so no correlation coefficient is computed between this project's risk ranking and either external index.
+`docs/EXTERNAL_VALIDATION.md` (added after external review) cross-checks Malaysia's placement against two independently published indices (DHL Global Connectedness Report 2026, Agility Emerging Markets Logistics Index 2026) and finds it directionally consistent, not contradictory. This is a qualitative triangulation check, not a formal quantitative benchmark: those indices' full underlying country-level data is commercial/licensed or not structured for a direct pillar-by-pillar comparison against this project's own four pillars, so no correlation coefficient is computed between this project's risk ranking and either external index.
 
 ## 12. The Weight-Sensitivity Monte Carlo Covers 48 of 59 Countries, Not All 59
 

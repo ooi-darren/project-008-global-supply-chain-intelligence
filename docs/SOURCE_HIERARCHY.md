@@ -18,7 +18,7 @@ How sources were evaluated and prioritised in this project, per the brief's Sect
 
 Added after external review, to name specific companies and independently benchmark the risk index, explicitly kept separate from the PUBLIC/DERIVED quantitative classification used everywhere else in this project, the same convention already applied to industry/consultancy commentary below:
 
-- **DHL Global Connectedness Report 2026, Agility Emerging Markets Logistics Index 2025**: independently published index rankings, used only for the qualitative external cross-check in `docs/EXTERNAL_VALIDATION.md`, not merged into this project's own risk index calculation.
+- **DHL Global Connectedness Report 2026, Agility Emerging Markets Logistics Index 2026**: independently published index rankings, used only for the qualitative external cross-check in `docs/EXTERNAL_VALIDATION.md`, not merged into this project's own risk index calculation.
 - **Public company-investment news reporting** (Infineon, Micron, ASE Technology, Intel): used to name real companies behind an already-computed SITC export statistic, not as a data source for any figure in this project.
 
 ## Evaluated, Not Used
