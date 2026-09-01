@@ -52,7 +52,12 @@ def save(fig, name):
 latest_trade = panel.sort_values("Year").groupby("ISO3").tail(1)
 world = gpd.read_file("data/external/world_110m.geojson")
 merged = world.merge(latest_trade, left_on="ISO_A3", right_on="ISO3", how="left")
-fig, ax = plt.subplots(figsize=(14, 7.5))
+# figsize height matches the map's true aspect ratio (xlim/ylim below): at
+# 14x7.5 the axes' fixed 'equal' aspect left ~40% of the canvas as blank
+# letterboxing under the map, which made the map itself shrink hard whenever
+# this image got scaled down to embed width -- that was the real "too
+# small/unclear" bug, not a resolution problem.
+fig, ax = plt.subplots(figsize=(14, 5.8))
 merged.plot(column="trade_pct_of_gdp", ax=ax, cmap="Blues", legend=True,
             missing_kwds={"color": "#e8e8e5", "label": "No data"},
             legend_kwds={"label": "Trade (exports+imports), % of GDP", "shrink": 0.55},
@@ -136,7 +141,7 @@ merged2 = world.merge(risk[["ISO3", "score_import_dependency"]].merge(
     latest_trade[["ISO3", "merchandise_imports_current_usd", "gdp_current_usd"]], on="ISO3"),
     left_on="ISO_A3", right_on="ISO3", how="left")
 merged2["import_dependency_pct"] = merged2["merchandise_imports_current_usd"] / merged2["gdp_current_usd"] * 100
-fig, ax = plt.subplots(figsize=(14, 7.5))
+fig, ax = plt.subplots(figsize=(14, 5.8))  # see note on figure 01: matches map aspect, no letterboxing
 merged2.plot(column="import_dependency_pct", ax=ax, cmap="Oranges", legend=True,
              missing_kwds={"color": "#e8e8e5", "label": "Not in 59-country network"},
              legend_kwds={"label": "Imports, % of GDP", "shrink": 0.55}, edgecolor="white", linewidth=0.3, vmax=100)
@@ -201,7 +206,7 @@ save(fig, "07_nickel_price_montecarlo")
 # 08. Port / logistics map (LPI overall score choropleth)
 # ---------------------------------------------------------------------------
 merged3 = world.merge(lpi_latest[["ISO3", "logistics_performance_index_overall"]], left_on="ISO_A3", right_on="ISO3", how="left")
-fig, ax = plt.subplots(figsize=(14, 7.5))
+fig, ax = plt.subplots(figsize=(14, 5.8))  # see note on figure 01: matches map aspect, no letterboxing
 merged3.plot(column="logistics_performance_index_overall", ax=ax, cmap="Greens", legend=True,
              missing_kwds={"color": "#e8e8e5", "label": "No data"},
              legend_kwds={"label": "Logistics Performance Index (1-5)", "shrink": 0.55}, edgecolor="white", linewidth=0.3)
@@ -251,10 +256,23 @@ nc = network_centrality[network_centrality["period"] == 2023] if network_central
 fig, ax = plt.subplots(figsize=(9, 7))
 ax.scatter(nc["betweenness_centrality"], nc["eigenvector_centrality"], s=nc["total_exports_to_network_usd"] / 3e9 + 15,
            color=ACCENT_1, alpha=0.6, edgecolor="white", linewidth=0.4)
-top_label = nc.nlargest(10, "eigenvector_centrality")
+top_label = nc.nlargest(10, "eigenvector_centrality").sort_values("eigenvector_centrality", ascending=False)
+# Fixed (5, 4)-point offsets left six countries (Germany/Netherlands/Hong Kong
+# SAR/Japan/UK/Korea) stacked on top of each other in the 0.12-0.20 band --
+# unreadable at any size, not just small. Same label-collision-avoidance
+# pattern as figure 02: nudge a label down in data units until it clears
+# every already-placed one, draw a thin leader line when it had to move.
+placed11 = []
 for _, row in top_label.iterrows():
-    ax.annotate(row["Country"], xy=(row["betweenness_centrality"], row["eigenvector_centrality"]),
-                xytext=(5, 4), textcoords="offset points", fontsize=8, color=INK_SECONDARY)
+    x, y = row["betweenness_centrality"], row["eigenvector_centrality"]
+    ly = y
+    while any(abs(x - px) < 0.05 and abs(ly - py) < 0.024 for px, py in placed11):
+        ly -= 0.024
+    placed11.append((x, ly))
+    lx = x + 0.012
+    if ly != y:
+        ax.plot([x, lx - 0.003], [y, ly], color=INK_MUTED, linewidth=0.5, alpha=0.6, zorder=1)
+    ax.annotate(row["Country"], xy=(lx, ly), fontsize=8, color=INK_SECONDARY, va="center", ha="left")
 ax.set_title("Network centrality: bridging role (x) vs. importance-by-association (y)", loc="left")
 ax.set_xlabel("Betweenness centrality (bridges between otherwise-unconnected trade relationships)")
 ax.set_ylabel("Eigenvector centrality (connected to other important economies)")
