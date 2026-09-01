@@ -46,6 +46,15 @@ def save(fig, name):
     print("saved", name)
 
 
+def bump_colorbar(fig, fontsize=11.5):
+    """geopandas .plot(legend=True) appends the colorbar as the figure's last
+    axes; bump its tick and label size to match the larger text used on the
+    handful of charts users actually read up close (01/04/08)."""
+    cax = fig.axes[-1]
+    cax.tick_params(labelsize=fontsize)
+    cax.yaxis.label.set_size(fontsize)
+
+
 # ---------------------------------------------------------------------------
 # 01. Global trade map (choropleth: merchandise exports as % of GDP, latest year)
 # ---------------------------------------------------------------------------
@@ -63,9 +72,10 @@ merged.plot(column="trade_pct_of_gdp", ax=ax, cmap="Blues", legend=True,
             legend_kwds={"label": "Trade (exports+imports), % of GDP", "shrink": 0.55},
             edgecolor="white", linewidth=0.3, vmax=200)
 ax.set_ylim(-58, 85); ax.set_xlim(-170, 190)
-ax.set_title("Trade openness varies enormously: city-states trade 300%+ of GDP, large economies under 40%", loc="left", fontsize=13)
+ax.set_title("Trade openness varies enormously: city-states trade 300%+ of GDP, large economies under 40%", loc="left", fontsize=16)
 ax.set_axis_off()
-add_source(fig, "Source: World Bank, trade % of GDP, each country's own latest available year, PUBLIC.")
+bump_colorbar(fig)
+add_source(fig, "Source: World Bank, trade % of GDP, each country's own latest available year, PUBLIC.", fontsize=9.5)
 save(fig, "01_global_trade_map")
 
 # ---------------------------------------------------------------------------
@@ -114,10 +124,10 @@ for n in top12:
     while any(abs(x - px) < 0.22 and abs((y - dy) - py) < 0.09 for px, py in placed):
         dy += 0.09
     placed.append((x, y - dy))
-    ax.annotate(code_to_name.get(n, n), (x, y - dy - 0.03), fontsize=9, color=INK_SECONDARY, ha="center", va="top")
-ax.set_title("Top 25 economies by export volume: hubs are large economies, not necessarily central ones", loc="left")
+    ax.annotate(code_to_name.get(n, n), (x, y - dy - 0.03), fontsize=10.5, color=INK_SECONDARY, ha="center", va="top")
+ax.set_title("Top 25 economies by export volume: hubs are large economies, not necessarily central ones", loc="left", fontsize=16)
 ax.set_axis_off()
-add_source(fig, "Source: UN Comtrade + OECD BTiGE, 2023 total exports, PUBLIC/DERIVED (4 of 59 countries backfilled from OECD, see docs/DATA_QUALITY.md). Restricted to the top 25 of 59 economies by export volume for legibility; full 59-country centrality analysis is Visualisation 11. Node size = total exports; labels = top 12.")
+add_source(fig, "Source: UN Comtrade + OECD BTiGE, 2023 total exports, PUBLIC/DERIVED (4 of 59 countries backfilled from OECD, see docs/DATA_QUALITY.md). Restricted to the top 25 of 59 economies by export volume for legibility; full 59-country centrality analysis is Visualisation 11. Node size = total exports; labels = top 12.", fontsize=9.5)
 save(fig, "02_global_trade_network")
 
 # ---------------------------------------------------------------------------
@@ -146,9 +156,10 @@ merged2.plot(column="import_dependency_pct", ax=ax, cmap="Oranges", legend=True,
              missing_kwds={"color": "#e8e8e5", "label": "Not in 59-country network"},
              legend_kwds={"label": "Imports, % of GDP", "shrink": 0.55}, edgecolor="white", linewidth=0.3, vmax=100)
 ax.set_ylim(-58, 85); ax.set_xlim(-170, 190)
-ax.set_title("Import dependency (% of GDP) among the 59 major economies tracked", loc="left", fontsize=13)
+ax.set_title("Import dependency (% of GDP) among the 59 major economies tracked", loc="left", fontsize=16)
 ax.set_axis_off()
-add_source(fig, "Source: World Bank, merchandise imports / GDP, PUBLIC. Limited to the 59-country network (see docs/LIMITATIONS.md).")
+bump_colorbar(fig)
+add_source(fig, "Source: World Bank, merchandise imports / GDP, PUBLIC. Limited to the 59-country network (see docs/LIMITATIONS.md).", fontsize=9.5)
 save(fig, "04_country_dependency_map")
 
 # ---------------------------------------------------------------------------
@@ -211,9 +222,10 @@ merged3.plot(column="logistics_performance_index_overall", ax=ax, cmap="Greens",
              missing_kwds={"color": "#e8e8e5", "label": "No data"},
              legend_kwds={"label": "Logistics Performance Index (1-5)", "shrink": 0.55}, edgecolor="white", linewidth=0.3)
 ax.set_ylim(-58, 85); ax.set_xlim(-170, 190)
-ax.set_title("Logistics performance is concentrated in Western Europe, East Asia, and a few global hubs", loc="left", fontsize=13)
+ax.set_title("Logistics performance is concentrated in Western Europe, East Asia, and a few global hubs", loc="left", fontsize=16)
 ax.set_axis_off()
-add_source(fig, "Source: World Bank Logistics Performance Index, each country's own latest published edition, PUBLIC.")
+bump_colorbar(fig)
+add_source(fig, "Source: World Bank Logistics Performance Index, each country's own latest published edition, PUBLIC.", fontsize=9.5)
 save(fig, "08_logistics_performance_map")
 
 # ---------------------------------------------------------------------------
@@ -266,17 +278,18 @@ placed11 = []
 for _, row in top_label.iterrows():
     x, y = row["betweenness_centrality"], row["eigenvector_centrality"]
     ly = y
-    while any(abs(x - px) < 0.05 and abs(ly - py) < 0.024 for px, py in placed11):
-        ly -= 0.024
+    while any(abs(x - px) < 0.05 and abs(ly - py) < 0.028 for px, py in placed11):
+        ly -= 0.028
     placed11.append((x, ly))
     lx = x + 0.012
     if ly != y:
         ax.plot([x, lx - 0.003], [y, ly], color=INK_MUTED, linewidth=0.5, alpha=0.6, zorder=1)
-    ax.annotate(row["Country"], xy=(lx, ly), fontsize=8, color=INK_SECONDARY, va="center", ha="left")
-ax.set_title("Network centrality: bridging role (x) vs. importance-by-association (y)", loc="left")
-ax.set_xlabel("Betweenness centrality (bridges between otherwise-unconnected trade relationships)")
-ax.set_ylabel("Eigenvector centrality (connected to other important economies)")
-add_source(fig, "Source: NetworkX on UN Comtrade + OECD BTiGE 2023 bilateral exports, genuinely-complete 59-country network, PUBLIC/DERIVED. Bubble size = total exports.")
+    ax.annotate(row["Country"], xy=(lx, ly), fontsize=10, color=INK_SECONDARY, va="center", ha="left")
+ax.set_title("Network centrality: bridging role (x) vs. importance-by-association (y)", loc="left", fontsize=16)
+ax.set_xlabel("Betweenness centrality (bridges between otherwise-unconnected trade relationships)", fontsize=11.5)
+ax.set_ylabel("Eigenvector centrality (connected to other important economies)", fontsize=11.5)
+ax.tick_params(labelsize=11)
+add_source(fig, "Source: NetworkX on UN Comtrade + OECD BTiGE 2023 bilateral exports, genuinely-complete 59-country network, PUBLIC/DERIVED. Bubble size = total exports.", fontsize=9.5)
 save(fig, "11_network_centrality")
 
 # ---------------------------------------------------------------------------
@@ -393,10 +406,11 @@ ax.fill_between(forecast_stress["year"], forecast_stress["scenario_G_energy_shoc
                  label="Scenario G: energy price shock band")
 ax.plot(forecast_stress["year"], forecast_stress["scenario_H_recession"] / 1e12, color="#c0392b", linewidth=1.6, linestyle=":", label="Scenario H: global recession")
 ax.plot(forecast_stress["year"], forecast_stress["scenario_D_trade_tension"] / 1e12, color=ACCENT_1, linewidth=1.6, linestyle=":", label="Scenario D: trade-tension escalation")
-ax.legend(loc="upper left", fontsize=8.5)
-ax.set_title("Malaysia export forecast, stress-tested against real historical shock magnitudes", loc="left", fontsize=11)
-ax.set_ylabel("Exports (RM trillion)")
-add_source(fig, "Source: malaysia_export_forecast_stress_test.csv, DERIVED. Shock magnitudes are Malaysia's own actual 2019/2020 export growth and fuel-export-share-weighted energy volatility, not external assumptions. See docs/FORECASTING.md.")
+ax.legend(loc="upper left", fontsize=10.5)
+ax.set_title("Malaysia export forecast, stress-tested against real historical shock magnitudes", loc="left", fontsize=14)
+ax.set_ylabel("Exports (RM trillion)", fontsize=11.5)
+ax.tick_params(labelsize=11)
+add_source(fig, "Source: malaysia_export_forecast_stress_test.csv, DERIVED. Shock magnitudes are Malaysia's own actual 2019/2020 export growth and fuel-export-share-weighted energy volatility, not external assumptions. See docs/FORECASTING.md.", fontsize=9.5)
 save(fig, "19_malaysia_forecast_stress_test")
 
 print("\nAll 19 visualisations generated (17 required + 2 added after external review).")

@@ -33,9 +33,9 @@ plt.rcParams.update({
     'legend.frameon': False,
 })
 
-def add_source(fig, text):
+def add_source(fig, text, fontsize=8.5):
     """Small muted source/classification footnote, consulting-deck style."""
-    fig.text(0.01, -0.04, text, ha='left', va='top', fontsize=8.5,
+    fig.text(0.01, -0.04, text, ha='left', va='top', fontsize=fontsize,
               color=INK_MUTED, style='italic', transform=fig.transFigure)
 
 def end_label(ax, x, y, text, color, weight='semibold', va='center', offset=8):
