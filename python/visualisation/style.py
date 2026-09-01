@@ -34,7 +34,7 @@ plt.rcParams.update({
     'legend.frameon': False,
 })
 
-def add_source(fig, text, fontsize=8.5, color=None):
+def add_source(fig, text, fontsize=8.5):
     """Small muted source/classification footnote, consulting-deck style.
 
     fig.text() draws one unwrapped line with no width limit of its own, so a
@@ -46,7 +46,7 @@ def add_source(fig, text, fontsize=8.5, color=None):
     left untouched, so this can't reflow every other chart's footnote.
     """
     txt = fig.text(0.01, -0.04, text, ha='left', va='top', fontsize=fontsize,
-                    color=color or INK_MUTED, style='italic', transform=fig.transFigure)
+                    color=INK_MUTED, style='italic', transform=fig.transFigure)
     fig.canvas.draw()
     renderer = fig.canvas.get_renderer()
     bbox_in = txt.get_window_extent(renderer).transformed(fig.dpi_scale_trans.inverted())
