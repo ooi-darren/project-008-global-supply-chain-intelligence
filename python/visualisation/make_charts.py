@@ -111,8 +111,27 @@ for u, v, d in g.edges(data=True):
 pos = nx.kamada_kawai_layout(g, weight="layout_weight")
 node_size = [total_exports_full[n] / 3e8 + 20 for n in g.nodes]
 node_color = [REGION_COLORS.get(code_to_region.get(n), GRAY) for n in g.nodes]
+# Drawing every edge in a 75%-dense graph meant ~300 crossing lines behind
+# the labels -- technically legible node text sitting in a hairball is
+# still slow to read, that's a separate problem from font size. Draw only
+# each country's strongest few trading relationships (by combined
+# import+export value) so the lines show real structure, not noise.
+pair_weight = {}
+for u, v, d in g.edges(data=True):
+    key = frozenset((u, v))
+    pair_weight[key] = pair_weight.get(key, 0) + d["weight"]
+TOP_PARTNERS_PER_NODE = 4
+keep_pairs = set()
+for n in g.nodes:
+    top_partners = sorted(
+        ((pair_weight[frozenset((n, m))], m) for m in g.nodes if m != n and frozenset((n, m)) in pair_weight),
+        reverse=True,
+    )[:TOP_PARTNERS_PER_NODE]
+    for _, m in top_partners:
+        keep_pairs.add(frozenset((n, m)))
+edges_to_draw = [(u, v) for u, v in g.edges() if frozenset((u, v)) in keep_pairs]
 fig, ax = plt.subplots(figsize=(12, 9.5))
-nx.draw_networkx_edges(g, pos, ax=ax, alpha=0.1, edge_color=GRAY, arrows=False)
+nx.draw_networkx_edges(g, pos, ax=ax, edgelist=edges_to_draw, alpha=0.35, edge_color=GRAY, arrows=False, width=0.8)
 nx.draw_networkx_nodes(g, pos, ax=ax, node_size=node_size, node_color=node_color, alpha=0.85, linewidths=0.5, edgecolors="white")
 top12 = sorted(g.nodes, key=lambda n: total_exports_full[n], reverse=True)[:12]
 # Simple label-collision avoidance: nudge a label vertically in small steps
@@ -127,7 +146,7 @@ for n in top12:
     ax.annotate(code_to_name.get(n, n), (x, y - dy - 0.03), fontsize=10.5, color=INK_SECONDARY, ha="center", va="top")
 ax.set_title("Top 25 economies by export volume: hubs are large economies, not necessarily central ones", loc="left", fontsize=16)
 ax.set_axis_off()
-add_source(fig, "Source: UN Comtrade + OECD BTiGE, 2023 total exports, PUBLIC/DERIVED (4 of 59 countries backfilled from OECD, see docs/DATA_QUALITY.md). Restricted to the top 25 of 59 economies by export volume for legibility; full 59-country centrality analysis is Visualisation 11. Node size = total exports; labels = top 12.", fontsize=9.5)
+add_source(fig, "Source: UN Comtrade + OECD BTiGE, 2023 total exports, PUBLIC/DERIVED (4 of 59 countries backfilled from OECD, see docs/DATA_QUALITY.md). Restricted to the top 25 of 59 economies by export volume for legibility; full 59-country centrality analysis is Visualisation 11. Node size = total exports; labels = top 12; lines shown = each country's top 4 trading relationships by combined trade value, not the full 75%-dense graph.", fontsize=9.5)
 save(fig, "02_global_trade_network")
 
 # ---------------------------------------------------------------------------
