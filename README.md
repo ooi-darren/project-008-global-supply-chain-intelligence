@@ -4,7 +4,7 @@
 
 <img src="./outputs/figures/02_global_trade_network.png" width="800" alt="Top 25 economies by export volume: hubs are large economies but not necessarily central ones, full 59-country centrality analysis in Visualisation 11">
 
-**Part of an [9-case-study portfolio](https://github.com/ooi-darren)**, the second global-scope project, and the first to combine trade flows, critical-materials supply, network science, and forecasting into one system.
+**Part of a [8-case-study portfolio](https://github.com/ooi-darren)**, the second global-scope project, and the first to combine trade flows, critical-materials supply, network science, and forecasting into one system.
 
 > Understanding how the world moves, identifying where supply chains are vulnerable, and assessing where they may go next, with a Malaysia 2030+ deep dive.
 
