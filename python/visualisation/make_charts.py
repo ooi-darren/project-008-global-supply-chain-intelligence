@@ -79,24 +79,20 @@ add_source(fig, "Source: World Bank, trade % of GDP, each country's own latest a
 save(fig, "01_global_trade_map")
 
 # ---------------------------------------------------------------------------
-# 02. Global supply-chain network (2023, top 25 economies by export volume)
+# 02. Global trade network, circular (2023, top 25 economies by export volume)
 # ---------------------------------------------------------------------------
-# Fixed after external review, twice. Attempt 1 (log-transformed layout
-# weight + larger k) improved label legibility but did not fix the real
-# problem: countries with genuinely few export partners in this 59-country
-# network (Iraq: 20 of 58 possible, Macao: 23, vs. a typical country's 50+)
-# have almost no attractive pull relative to the graph's dense, high-value
-# hub cluster, so force-directed layout flings them to arbitrary extreme
-# positions regardless of weight scaling. That is a structural property of
-# spring_layout on a 75%-dense, degree-heterogeneous graph, not a tuning
-# parameter, no amount of k/weight adjustment fixes it.
-# Fixed properly: this illustrative node-link chart is restricted to the
-# top 25 economies by total export volume (a real, stated reduction, not a
-# hidden one), which are exactly the well-connected countries a force-directed
-# layout renders sensibly; the full, unrestricted 59-country network is what
-# the actual rigorous centrality analysis (betweenness/eigenvector/PageRank,
-# Visualisation 11, python/networks/trade_network.py) is computed on, this
-# chart is illustrative, that one is the analysis.
+# Went through several treatments before this one: a force-directed layout
+# (rejected after external review -- structural property of spring_layout on
+# a 75%-dense, degree-heterogeneous graph, not a tuning problem: countries
+# with few export partners get flung to arbitrary extreme positions no
+# matter the weighting); a geographic map (rejected once it became clear 9
+# of the top 25 economies sit in Western Europe, genuinely too close
+# together at any map zoom to label without an inset panel, which then had
+# its own zorder/clipping bugs); a dark "glow" map (style mismatch once a
+# reference image was supplied). This is a circular/chord layout instead:
+# no geography, so no clustering problem at all -- every node gets its own
+# angular slot with nothing else nearby, and every label points straight
+# outward from its own node, never into another node's territory.
 g_full = nx.DiGraph()
 sub = edges_resolved[edges_resolved["period"].astype(str) == "2023"]
 code_to_name = dict(zip(countries["comtradeReporterCode"], countries["Country"]))
@@ -106,48 +102,98 @@ for _, row in sub.iterrows():
 total_exports_full = {n: sum(w for _, _, w in g_full.out_edges(n, data="weight")) for n in g_full.nodes}
 top25 = sorted(g_full.nodes, key=lambda n: total_exports_full[n], reverse=True)[:25]
 g = g_full.subgraph(top25).copy()
-for u, v, d in g.edges(data=True):
-    d["layout_weight"] = np.log1p(d["weight"])
-pos = nx.kamada_kawai_layout(g, weight="layout_weight")
-node_size = [total_exports_full[n] / 3e8 + 20 for n in g.nodes]
-node_color = [REGION_COLORS.get(code_to_region.get(n), GRAY) for n in g.nodes]
-# Drawing every edge in a 75%-dense graph meant ~300 crossing lines behind
-# the labels -- technically legible node text sitting in a hairball is
-# still slow to read, that's a separate problem from font size. Draw only
-# each country's strongest few trading relationships (by combined
-# import+export value) so the lines show real structure, not noise.
+
+# Every real trading relationship among these 25 economies is drawn -- none
+# cut. What keeps ~225 edges (75%-dense) from becoming a hairball is
+# weighting each line's width AND opacity by its actual trade value (log-
+# scaled, since a few relationships like US-Canada dwarf most others): a
+# weak tie fades to nearly nothing, a major one stands out, and the real
+# shape of who-trades-with-whom is all still genuinely there to look closer
+# at, not discarded for legibility.
 pair_weight = {}
 for u, v, d in g.edges(data=True):
     key = frozenset((u, v))
     pair_weight[key] = pair_weight.get(key, 0) + d["weight"]
-TOP_PARTNERS_PER_NODE = 4
-keep_pairs = set()
-for n in g.nodes:
-    top_partners = sorted(
-        ((pair_weight[frozenset((n, m))], m) for m in g.nodes if m != n and frozenset((n, m)) in pair_weight),
-        reverse=True,
-    )[:TOP_PARTNERS_PER_NODE]
-    for _, m in top_partners:
-        keep_pairs.add(frozenset((n, m)))
-edges_to_draw = [(u, v) for u, v in g.edges() if frozenset((u, v)) in keep_pairs]
-fig, ax = plt.subplots(figsize=(12, 9.5))
-nx.draw_networkx_edges(g, pos, ax=ax, edgelist=edges_to_draw, alpha=0.35, edge_color=GRAY, arrows=False, width=0.8)
-nx.draw_networkx_nodes(g, pos, ax=ax, node_size=node_size, node_color=node_color, alpha=0.85, linewidths=0.5, edgecolors="white")
-top12 = sorted(g.nodes, key=lambda n: total_exports_full[n], reverse=True)[:12]
-# Simple label-collision avoidance: nudge a label vertically in small steps
-# if it would otherwise land on top of an already-placed one.
-placed = []
-for n in top12:
-    x, y = pos[n]
-    dy = 0.0
-    while any(abs(x - px) < 0.22 and abs((y - dy) - py) < 0.09 for px, py in placed):
-        dy += 0.09
-    placed.append((x, y - dy))
-    ax.annotate(code_to_name.get(n, n), (x, y - dy - 0.03), fontsize=10.5, color=INK_SECONDARY, ha="center", va="top")
-ax.set_title("Top 25 economies by export volume: hubs are large economies, not necessarily central ones", loc="left", fontsize=16)
+
+def fmt_usd(v):
+    return f"${v/1e12:.2f}T" if v >= 1e12 else f"${v/1e9:.0f}B"
+
+# Friendly, not neon: moderate-saturation region colors on a soft dark
+# ground, not pure black/pure neon -- readable and pleasant rather than
+# harsh, distinct enough to tell the 7 regions present in this top-25 apart.
+REGION_PALETTE = {
+    "North America": "#5b9bd5", "Latin America": "#7cc576", "Europe": "#b98fdb",
+    "East Asia": "#f2836b", "South & Southeast Asia": "#4fc3c0",
+    "Oceania": "#f2b84b", "Middle East": "#e8607a",
+}
+CIRCLE_BG = "#141926"
+TEXT_LIGHT = "#eef1f8"
+TEXT_MUTED = "#8b93ab"
+EDGE_COLOR = "#aeb7cc"
+
+nodes_sorted = sorted(g.nodes, key=lambda n: total_exports_full[n], reverse=True)
+N = len(nodes_sorted)
+node_angle = {n: (np.pi / 2 - 2 * np.pi * i / N) for i, n in enumerate(nodes_sorted)}  # start at top, clockwise
+R = 13.5  # bigger ring: more arc length between adjacent nodes, so their labels don't crowd each other
+node_xy = {n: (R * np.cos(node_angle[n]), R * np.sin(node_angle[n])) for n in nodes_sorted}
+
+fig, ax = plt.subplots(figsize=(20, 21))
+fig.patch.set_facecolor(CIRCLE_BG)
+ax.set_facecolor(CIRCLE_BG)
+ax.set_aspect("equal")
+max_log_w = np.log1p(max(pair_weight.values()))
+for key, w in sorted(pair_weight.items(), key=lambda kv: kv[1]):  # draw strongest last, on top
+    u, v = tuple(key)
+    x1, y1 = node_xy[u]; x2, y2 = node_xy[v]
+    frac = np.log1p(w) / max_log_w
+    ax.plot([x1, x2], [y1, y2], color=EDGE_COLOR, linewidth=(0.3 + 2.6 * frac), alpha=0.08 + 0.5 * frac, zorder=2)
+
+node_val = np.array([total_exports_full[n] for n in nodes_sorted])
+node_size = 900 + 5200 * np.sqrt(node_val / node_val.max())  # sqrt: area, not radius, proportional to value
+node_color = [REGION_PALETTE.get(code_to_region.get(n), TEXT_MUTED) for n in nodes_sorted]
+xs = [node_xy[n][0] for n in nodes_sorted]
+ys = [node_xy[n][1] for n in nodes_sorted]
+ax.scatter(xs, ys, s=node_size, c=node_color, alpha=0.95, edgecolor=CIRCLE_BG, linewidth=2.5, zorder=3)
+
+# "Hong Kong SAR, China" is long enough on its own to collide with its ring
+# neighbor's label even with good angular spacing -- shortened for this
+# chart's on-image display only, nowhere else, the data/analysis keep the
+# full official name throughout.
+DISPLAY_NAME = {344: "Hong Kong SAR"}  # comtradeReporterCode 344
+for n in nodes_sorted:
+    x, y = node_xy[n]
+    ang = node_angle[n]
+    # China's marker alone is nearly 7x the area of the smallest node -- a
+    # fixed label offset put its $ value label overlapping the node itself.
+    # Scale the offset by this node's own size so bigger circles push their
+    # label further out, not just the ring's average node.
+    size_frac = (total_exports_full[n] / node_val.max()) ** 0.5
+    label_r = 1.35 + 1.7 * size_frac
+    lx, ly = x + label_r * np.cos(ang), y + label_r * np.sin(ang)
+    ha = "left" if np.cos(ang) >= -0.05 else "right"
+    ax.annotate(DISPLAY_NAME.get(n, code_to_name.get(n, n)), (lx, ly), fontsize=14, fontweight="bold", color=TEXT_LIGHT,
+                ha=ha, va="center", zorder=6)
+    ax.annotate(fmt_usd(total_exports_full[n]), (lx, ly - 0.8), fontsize=11.5, color=TEXT_MUTED,
+                ha=ha, va="center", zorder=6)
+
+# Region legend, bottom-left.
+legend_items = [(r, c) for r, c in REGION_PALETTE.items() if any(code_to_region.get(n) == r for n in nodes_sorted)]
+legend_top = -R - 2.6
+for i, (region, color) in enumerate(legend_items):
+    ly = legend_top - i * 0.9
+    ax.scatter([-R - 2], [ly], s=130, c=color, edgecolor=CIRCLE_BG, linewidth=1, zorder=6)
+    ax.annotate(region, (-R - 1.5, ly), fontsize=13, color=TEXT_LIGHT, va="center", zorder=6)
+
+ax.set_xlim(-R - 4.5, R + 4.5)
+ax.set_ylim(legend_top - len(legend_items) * 0.9 - 1, R + 3.2)
+ax.set_title("Top 25 economies by export volume: hubs are large economies, not necessarily central ones",
+             loc="left", fontsize=23, color=TEXT_LIGHT, fontweight="bold", pad=18)
 ax.set_axis_off()
-add_source(fig, "Source: UN Comtrade + OECD BTiGE, 2023 total exports, PUBLIC/DERIVED (4 of 59 countries backfilled from OECD, see docs/DATA_QUALITY.md). Restricted to the top 25 of 59 economies by export volume for legibility; full 59-country centrality analysis is Visualisation 11. Node size = total exports; labels = top 12; lines shown = each country's top 4 trading relationships by combined trade value, not the full 75%-dense graph.", fontsize=9.5)
-save(fig, "02_global_trade_network")
+add_source(fig, "Source: UN Comtrade + OECD BTiGE, 2023 total exports, PUBLIC/DERIVED (4 of 59 countries backfilled from OECD, see docs/DATA_QUALITY.md). Restricted to the top 25 of 59 economies by export volume for legibility; full 59-country centrality analysis is Visualisation 11. Node size = total exports (area-proportional). Every trading relationship among these 25 economies is drawn, not a subset -- line width and opacity both scale with trade value (log-scaled) so weak ties fade rather than being cut.",
+           fontsize=12, color=TEXT_MUTED)
+fig.savefig(f"{OUT}/02_global_trade_network.png", dpi=150, bbox_inches="tight", facecolor=CIRCLE_BG)
+plt.close(fig)
+print("saved 02_global_trade_network")
 
 # ---------------------------------------------------------------------------
 # 03. Regional trade comparison
