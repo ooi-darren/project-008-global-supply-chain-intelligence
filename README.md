@@ -24,7 +24,7 @@ This project builds a global supply-chain intelligence system from UN Comtrade, 
 
 ## Key Findings
 
-**1. Network importance and raw trade volume are not the same thing.** Between 2016 and 2023, India gained the most network importance of any economy (+44% PageRank), followed by the Netherlands, Belgium, Poland, the United States, and Mexico. The UK (-22%), Hong Kong SAR (-24%), and Japan (-18%) lost the most network importance over the same window, and Iran lost the most of all (-43%).
+**1. Network importance and raw trade volume are not the same thing.** Between 2016 and 2023, India gained the most network importance of any economy (+44% PageRank), followed by Poland, the Netherlands, Belgium, Turkiye, and Bangladesh. The UK (-22%), Hong Kong SAR (-24%), and Japan (-18%) lost the most network importance over the same window, and Iran lost the most of all (-43%).
 
 **2. Four materials are highly concentrated by any standard measure.** Gallium (China, 98% of world mine production, HHI=9,626), Tungsten (China, 84%, HHI=7,166), Graphite (China, 79%, HHI=6,314), and Cobalt (DR Congo, 76%, HHI=5,822) are all far above the standard "highly concentrated" HHI threshold of 2,500. Nickel (Indonesia, 60%, HHI=3,837) is a genuine, currently unfolding case of concentration rising fast on the back of Indonesia's export/downstreaming policy.
 
@@ -137,7 +137,7 @@ Malaysia is a dedicated strategic case study, not an appendix: full framework in
 
 ### Insight 1: Network importance and raw trade volume diverge, and this analysis only became trustworthy once it was actually complete
 
-**DATA:** Between 2016 and 2023, India gained more structural network importance than any other economy in this dataset (+44% PageRank), followed by the Netherlands, Belgium, Poland, the United States, and Mexico; the UK, Hong Kong SAR, and Japan lost the most (-17% to -24%), Iran lost the most of all (-43%).
+**DATA:** Between 2016 and 2023, India gained more structural network importance than any other economy in this dataset (+44% PageRank), followed by Poland, the Netherlands, Belgium, Turkiye, and Bangladesh; the UK, Hong Kong SAR, and Japan lost the most (-17% to -24%), Iran lost the most of all (-43%).
 
 **INSIGHT:** Ranking countries purely by trade volume or GDP misses this shift entirely, a country's position within the network is a separate signal than raw export value. But the deeper insight is methodological: a network-centrality finding built on an incomplete network, even one missing "only" 4 of 59 countries, can be actively wrong, not just imprecise, especially when the missing countries are among the most globally connected (the United States, in this case).
 
